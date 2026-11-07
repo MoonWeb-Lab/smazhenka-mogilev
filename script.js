@@ -29,18 +29,22 @@ document.documentElement.classList.add('js');
       const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
       const mogilevTime = new Date(utc + (3600000 * 3));
       
+      const day = mogilevTime.getDay(); // 0: вс, 6: сб
+      const isWeekend = day === 0 || day === 6;
       const hours = mogilevTime.getHours();
       const minutes = mogilevTime.getMinutes();
       const seconds = mogilevTime.getSeconds();
 
-      // Режим работы: 08:00 до 21:00
-      const isOpen = hours >= 8 && hours < 21;
+      // Режим работы: будни 09:00 до 21:00, выходные 10:00 до 20:00
+      const openHour = isWeekend ? 10 : 9;
+      const closeHour = isWeekend ? 20 : 21;
+      const isOpen = hours >= openHour && hours < closeHour;
 
       if (statusTextEl) {
         if (isOpen) {
-          statusTextEl.textContent = 'Печь горячая, открыто до 21:00';
+          statusTextEl.textContent = `Печи горячие, открыто до ${closeHour}:00`;
         } else {
-          statusTextEl.textContent = 'Откроется в 08:00';
+          statusTextEl.textContent = `Откроется в ${openHour}:00`;
         }
       }
 
@@ -57,7 +61,7 @@ document.documentElement.classList.add('js');
 
           batchTimerEl.textContent = `${formattedMins}:${formattedSecs}`;
         } else {
-          batchTimerEl.textContent = 'утром в 08:15';
+          batchTimerEl.textContent = `утром в ${openHour}:15`;
         }
       }
     }
