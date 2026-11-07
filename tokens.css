@@ -1,0 +1,103 @@
+:root {
+  color-scheme: light;
+  --space-3xs: 2px;
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 36px;
+  --space-2xl: 56px;
+  --space-3xl: 80px;
+  --space-4xl: 120px;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.1875rem;
+  --text-xl: 1.4375rem;
+  --text-2xl: 1.875rem;
+  --text-3xl: 2.375rem;
+
+  --text-display-s: clamp(2rem, 3.5vw + 0.5rem, 3.25rem);
+  --text-display: clamp(2.35rem, 4.5vw + 0.5rem, 4rem);
+  --text-section: clamp(1.75rem, 2.5vw + 0.75rem, 2.75rem);
+  --text-title: clamp(1.15rem, 0.75vw + 0.85rem, 1.45rem);
+  --text-lead: clamp(1.05rem, 0.35vw + 0.95rem, 1.25rem);
+
+  /* Emil Kowalski custom easings */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --dur-micro: 140ms;
+  --dur-short: 200ms;
+  --dur-long: 300ms;
+
+  --color-error: oklch(52% 0.19 27);
+  --color-success: oklch(50% 0.12 150);
+
+  --container: 1180px;
+  --gutter: 24px;
+  --gap-columns: 20px;
+  --section-gap-s: 56px;
+  --section-gap: 80px;
+  --section-gap-l: 104px;
+
+  --z-base: 1;
+  --z-raised: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-sticky-nav: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  /* Palette: Warm crust terracotta anchor on warm paper */
+  --color-paper: oklch(96% 0.016 75);
+  --color-paper-2: oklch(93% 0.022 72);
+  --color-paper-3: oklch(89% 0.028 68);
+  --color-surface: oklch(98% 0.012 75);
+  --color-ink: oklch(22% 0.028 50);
+  --color-ink-2: oklch(34% 0.030 50);
+  --color-muted: oklch(48% 0.025 55);
+  --color-disabled-ink: oklch(45% 0.025 55);
+  --color-disabled-bg: oklch(92% 0.015 70);
+  --color-rule: oklch(85% 0.026 65);
+  --color-rule-dark: oklch(72% 0.035 60);
+
+  /* Baked crust deep terracotta orange */
+  --color-accent: oklch(54% 0.195 44);
+  --color-accent-hover: oklch(47% 0.195 42);
+  --color-accent-subtle: oklch(93% 0.05 55);
+  --color-accent-ink: oklch(98% 0.01 75);
+  --color-focus: oklch(54% 0.195 44);
+  --color-badge-bg: oklch(91% 0.065 52);
+  --color-badge-ink: oklch(44% 0.17 40);
+
+  --font-display: "Onest", system-ui, -apple-system, sans-serif;
+  --font-body: "Golos Text", system-ui, -apple-system, sans-serif;
+  --font-outlier: var(--font-body);
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-card: 14px;
+  --radius-pill: 999px;
+  --rule-hair: 1px;
+  --rule-solid: 2px;
+
+  --shadow-btn-primary: 0 2px 8px oklch(22% 0.028 50 / 0.16);
+  --shadow-btn-primary-hover: 0 6px 16px oklch(22% 0.028 50 / 0.22);
+  --shadow-badge: 0 4px 12px oklch(22% 0.028 50 / 0.12);
+  --shadow-card: 0 4px 16px -2px oklch(22% 0.028 50 / 0.06);
+  --shadow-card-hover: 0 10px 24px -4px oklch(22% 0.028 50 / 0.12);
+  --shadow-tray: 0 -4px 20px oklch(22% 0.028 50 / 0.08);
+  --shadow-drawer: -6px 0 28px oklch(22% 0.028 50 / 0.14);
+
+  --color-backdrop: oklch(22% 0.028 50 / 0.4);
+  --color-progress-bg: oklch(91% 0.02 70);
+  --color-progress-fill: oklch(54% 0.195 44);
+  --color-progress-complete: oklch(50% 0.12 150);
+  --tracking-display: -0.02em;
+}

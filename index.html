@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Смаженка Могилёв: горячая выпечка и смаженки из печи</title>
+  <meta name="description" content="Культовая закусочная Смаженка в Могилёве на Первомайской. Свежая горячая выпечка каждые 15 минут, сытные начинки, румяная корочка. Меню, цены от 2.90 BYN, адрес и режим работы.">
+  <link rel="canonical" href="https://smazhenka-mogilev.by/">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Смаженка Могилёв: горячая выпечка и смаженки из печи">
+  <meta property="og:description" content="Легендарные могилёвские смаженки прямо из печи. Быстрый и сытный перекус от 2.90 BYN на Первомайской.">
+  <meta property="og:type" content="restaurant">
+  <meta property="og:locale" content="ru_BY">
+
+  <!-- Шрифты -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Onest:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Schema.org микроразметка для локального SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FastFoodRestaurant",
+    "name": "Смаженка",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Pizza_baker_woman_stone_oven_2.jpg/1280px-Pizza_baker_woman_stone_oven_2.jpg",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "ул. Первомайская, 31",
+      "addressLocality": "Могилёв",
+      "addressRegion": "Могилёвская область",
+      "postalCode": "212030",
+      "addressCountry": "BY"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 53.9007,
+      "longitude": 30.3323
+    },
+    "telephone": "+375222741288",
+    "priceRange": "BYN",
+    "servesCuisine": [
+      "Белорусская выпечка",
+      "Смаженки",
+      "Быстрое питание"
+    ],
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+        ],
+        "opens": "08:00",
+        "closes": "21:00"
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <!-- Шапка сайта -->
+  <header class="site-header">
+    <div class="container">
+      <nav class="site-nav" aria-label="Основная навигация">
+        <a href="#" class="brand" aria-label="Смаженка Могилёв на главную">
+          <span class="brand-title">СМАЖЕНКА</span>
+          <span class="brand-city">Могилёв</span>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="#menu" class="nav-link">Меню печи</a></li>
+          <li><a href="#craft" class="nav-link">Секрет корочки</a></li>
+          <li><a href="#location" class="nav-link">Адрес и режим</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <div class="status-badge" role="status" aria-live="polite">
+            <span class="status-pulse" aria-hidden="true"></span>
+            <span id="status-text">Печь горячая</span>
+          </div>
+          <button type="button" class="cart-trigger-btn" id="open-cart-btn" aria-label="Открыть корзину">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <span class="cart-count-badge" id="header-cart-badge">0</span>
+          </button>
+          <a href="#menu" class="btn btn-primary btn-sm">Смотреть меню</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Первый экран (Hero) -->
+    <section id="hero" class="hero" aria-labelledby="hero-title">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <h1 id="hero-title" class="hero-headline">Культовая могилёвская смаженка</h1>
+
+            <p class="hero-lead">Пышное тесто, сытная начинка и фирменная румяная корочка каждые 15 минут прямо из печи.</p>
+
+            <div class="hero-actions">
+              <a href="#menu" class="btn btn-primary">Смотреть меню</a>
+              <a href="#location" class="btn btn-secondary">Адрес и режим</a>
+            </div>
+
+            <div class="hero-quick-facts">
+              <div class="fact-item">
+                <span class="fact-value">от 2.90 BYN</span>
+                <span class="fact-label">честные цены</span>
+              </div>
+              <div class="fact-item">
+                <span class="fact-value">5 минут</span>
+                <span class="fact-label">быстрая подача</span>
+              </div>
+              <div class="fact-item">
+                <span class="fact-value">260 градусов</span>
+                <span class="fact-label">каменная печь</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-media" data-slot="oven">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Pizza_baker_woman_stone_oven_2.jpg/1280px-Pizza_baker_woman_stone_oven_2.jpg" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Pizza_baker_woman_stone_oven_2.jpg/960px-Pizza_baker_woman_stone_oven_2.jpg 960w, https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Pizza_baker_woman_stone_oven_2.jpg/1280px-Pizza_baker_woman_stone_oven_2.jpg 1280w, https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Pizza_baker_woman_stone_oven_2.jpg/1920px-Pizza_baker_woman_stone_oven_2.jpg 1920w" sizes="(max-width: 60rem) 100vw, 50vw" width="4927" height="3285" alt="Выпекание горячих смаженок в каменной печи" style="object-position: 55% 50%">
+            <div class="hero-media-badge">Свежая партия каждые 15 минут</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Полоса динамического таймера выпекания -->
+    <aside class="batch-bar" aria-label="Таймер свежей партии">
+      <div class="container">
+        <div class="batch-inner">
+          <div class="batch-info">
+            <span class="batch-title">Следующий выход из печи:</span>
+            <span id="batch-timer" class="batch-timer" aria-live="polite">07:42</span>
+          </div>
+          <span class="batch-schedule">Выпекаем непрерывно с 08:00 до 21:00</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Раздел меню -->
+    <section id="menu" class="menu-section" aria-labelledby="menu-title">
+      <div class="container">
+        <header class="section-head">
+          <h2 id="menu-title" class="section-title">Меню горячей печи</h2>
+          <p class="section-subtitle">Выберите смаженку или соберите быстрый перекус перед учебой или сменой.</p>
+        </header>
+
+        <!-- Фильтры категорий -->
+        <div class="menu-filter-bar" role="tablist" aria-label="Категории меню">
+          <button type="button" class="filter-chip is-active" data-category="all" role="tab" aria-selected="true" aria-pressed="true">Все позиции</button>
+          <button type="button" class="filter-chip" data-category="classic" role="tab" aria-selected="false" aria-pressed="false">Фирменная классика</button>
+          <button type="button" class="filter-chip" data-category="meat" role="tab" aria-selected="false" aria-pressed="false">Сытные мясные</button>
+          <button type="button" class="filter-chip" data-category="cheese" role="tab" aria-selected="false" aria-pressed="false">Сыр и грибы</button>
+          <button type="button" class="filter-chip" data-category="drinks" role="tab" aria-selected="false" aria-pressed="false">Горячие напитки</button>
+        </div>
+
+        <!-- Сетка позиций меню -->
+        <div class="menu-grid">
+          <!-- Позиция 1 -->
+          <article class="menu-card" data-category="classic" data-id="smazhenka-classic" data-price="3.40">
+            <div class="menu-card-top">
+              <h3 class="menu-card-name">Могилёвская фирменная</h3>
+              <span class="item-badge">Хит</span>
+            </div>
+            <p class="menu-card-desc">Рубленая свинина, томлёный репчатый лук, яйцо и нежная сметанная заливка на пышной основе.</p>
+            <div class="menu-card-bottom">
+              <div class="price-box">
+                <span class="price-val">3.40</span>
+                <span class="price-currency">BYN</span>
+                <span class="price-weight">180 г</span>
+              </div>
+              <button type="button" class="item-btn" aria-label="Добавить Могилёвская фирменная в заказ">Добавить</button>
+            </div>
+          </article>
+
+          <!-- Позиция 2 -->
+          <article class="menu-card" data-category="meat" data-id="smazhenka-ham-cheese" data-price="3.20">
+            <div class="menu-card-top">
+              <h3 class="menu-card-name">Ветчина с сыром</h3>
+            </div>
+            <p class="menu-card-desc">Сочная фермерская ветчина, щедрый слой сыра и аппетитная запечённая корочка.</p>
+            <div class="menu-card-bottom">
+              <div class="price-box">
+                <span class="price-val">3.20</span>
+                <span class="price-currency">BYN</span>
+                <span class="price-weight">175 г</span>
+              </div>
+              <button type="button" class="item-btn" aria-label="Добавить Ветчина с сыром в заказ">Добавить</button>
+            </div>
+          </article>
+
+          <!-- Позиция 3 -->
+          <article class="menu-card" data-category="meat" data-id="smazhenka-hunting" data-price="3.80">
+            <div class="menu-card-top">
+              <h3 class="menu-card-name">Охотничья пикантная</h3>
+              <span class="item-badge">Сытно</span>
+            </div>
+            <p class="menu-card-desc">Копчёные охотничьи колбаски, маринованный огурчик, моцарелла и домашний томатный соус.</p>
+            <div class="menu-card-bottom">
+              <div class="price-box">
+                <span class="price-val">3.80</span>
+                <span class="price-currency">BYN</span>
+                <span class="price-weight">190 г</span>
+              </div>
+              <button type="button" class="item-btn" aria-label="Добавить Охотничья пикантная в заказ">Добавить</button>
+            </div>
+          </article>
+
+          <!-- Позиция 4 -->
+          <article class="menu-card" data-category="cheese" data-id="smazhenka-mushrooms" data-price="2.90">
+            <div class="menu-card-top">
+              <h3 class="menu-card-name">Деревенская с грибами</h3>
+            </div>
+            <p class="menu-card-desc">Обжаренные лесные грибы с луком, сулугуни, свежий укроп и сметанный соус.</p>
+            <div class="menu-card-bottom">
+              <div class="price-box">
+                <span class="price-val">2.90</span>
+                <span class="price-currency">BYN</span>
+                <span class="price-weight">180 г</span>
+              </div>
+              <button type="button" class="item-btn" aria-label="Добавить Деревенская с грибами в заказ">Добавить</button>
+            </div>
+          </article>
+
+          <!-- Позиция 5 -->
+          <article class="menu-card" data-category="cheese" data-id="smazhenka-four-cheese" data-price="3.60">
+            <div class="menu-card-top">
+              <h3 class="menu-card-name">Четыре сыра</h3>
+            </div>
+            <p class="menu-card-desc">Тягучая моцарелла, голландский сыр, сулугуни и творожный сыр с зеленью.</p>
+            <div class="menu-card-bottom">
+              <div class="price-box">
+                <span class="price-val">3.60</span>
+                <span class="price-currency">BYN</span>
+                <span class="price-weight">170 г</span>
+              </div>
+              <button type="button" class="item-btn" aria-label="Добавить Четыре сыра в заказ">Добавить</button>
+            </div>
+          </article>
+
+          <!-- Позиция 6 -->
+          <article class="menu-card" data-category="classic" data-id="smazhenka-student" data-price="2.90">
+            <div class="menu-card-top">
+              <h3 class="menu-card-name">Студенческая с курицей</h3>
+              <span class="item-badge">Выгодно</span>
+            </div>
+            <p class="menu-card-desc">Нежное филе цыплёнка, картофельное пюре, золотистая сырная шапочка.</p>
+            <div class="menu-card-bottom">
+              <div class="price-box">
+                <span class="price-val">2.90</span>
+                <span class="price-currency">BYN</span>
+                <span class="price-weight">195 г</span>
+              </div>
+              <button type="button" class="item-btn" aria-label="Добавить Студенческая с курицей в заказ">Добавить</button>
+            </div>
+          </article>
+
+          <!-- Позиция 7 -->
+          <article class="menu-card" data-category="drinks" data-id="drink-broth" data-price="1.50">
+            <div class="menu-card-top">
+              <h3 class="menu-card-name">Бульон с зеленью</h3>
+            </div>
+            <p class="menu-card-desc">Наваристый горячий куриный бульон в удобном стакане к свежей смаженке.</p>
+            <div class="menu-card-bottom">
+              <div class="price-box">
+                <span class="price-val">1.50</span>
+                <span class="price-currency">BYN</span>
+                <span class="price-weight">250 мл</span>
+              </div>
+              <button type="button" class="item-btn" aria-label="Добавить Бульон с зеленью в заказ">Добавить</button>
+            </div>
+          </article>
+
+          <!-- Позиция 8 -->
+          <article class="menu-card" data-category="drinks" data-id="drink-coffee" data-price="2.50">
+            <div class="menu-card-top">
+              <h3 class="menu-card-name">Кофе свежесваренный</h3>
+            </div>
+            <p class="menu-card-desc">Бодрящий американо или капучино из свежемолотых зерен арабики.</p>
+            <div class="menu-card-bottom">
+              <div class="price-box">
+                <span class="price-val">2.50</span>
+                <span class="price-currency">BYN</span>
+                <span class="price-weight">200 мл</span>
+              </div>
+              <button type="button" class="item-btn" aria-label="Добавить Кофе свежесваренный в заказ">Добавить</button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Раздел: Почему смаженка культовая -->
+    <section id="craft" class="craft-section" aria-labelledby="craft-title">
+      <div class="container">
+        <header class="section-head">
+          <h2 id="craft-title" class="section-title">Секрет правильной смаженки</h2>
+          <p class="section-subtitle">Простые правила пекарни, благодаря которым смаженка остается любимой едой могилевчан.</p>
+        </header>
+
+        <div class="craft-grid">
+          <article class="craft-card">
+            <div class="craft-num">01</div>
+            <h3 class="craft-title">Живое опарное тесто</h3>
+            <p class="craft-desc">Тесто подходит не менее трех часов на натуральной опаре. Внутри оно остается нежным и воздушным, не черствеет и не крошится.</p>
+          </article>
+
+          <article class="craft-card">
+            <div class="craft-num">02</div>
+            <h3 class="craft-title">Печь на 260 градусов</h3>
+            <p class="craft-desc">Выпекаем при высокой температуре за считанные минуты. Начинка сохраняет сочность, а сыр и сметанная заливка образуют фирменную корочку.</p>
+          </article>
+
+          <article class="craft-card">
+            <div class="craft-num">03</div>
+            <h3 class="craft-title">Никакой вчерашней выпечки</h3>
+            <p class="craft-desc">Каждая партия разбирается за 15-20 минут. Если противень пуст, следующая партия уже запекается в печи.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Быстрый заказ по телефону -->
+    <section class="hotline-banner" aria-labelledby="hotline-title">
+      <div class="container">
+        <div class="hotline-inner">
+          <div class="hotline-text">
+            <h2 id="hotline-title" class="hotline-title">Спешите на пару или работу?</h2>
+            <p class="hotline-desc">Позвоните нам за 10 минут до прихода. Снимем смаженки прямо с противня и упакуем в термопакет к вашему приходу.</p>
+          </div>
+          <div class="hotline-actions">
+            <a href="tel:+375222741288" class="btn btn-primary">Позвонить в пекарню</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Адрес, режим работы и карта -->
+    <section id="location" class="location-section" aria-labelledby="location-title">
+      <div class="container">
+        <header class="section-head">
+          <h2 id="location-title" class="section-title">Адрес и режим работы</h2>
+          <p class="section-subtitle">Центр Могилёва, в трех минутах пешком от площади Звёзд.</p>
+        </header>
+
+        <div class="location-grid">
+          <div class="location-info">
+            <div class="info-block">
+              <h3 class="info-heading">Где мы находимся</h3>
+              <p class="info-text">г. Могилёв, ул. Первомайская, 31</p>
+              <p class="info-text">Ориентир: вход с пешеходной стороны, рядом с корпусом университета и сквером 40-летия Победы.</p>
+            </div>
+
+            <div class="info-block">
+              <h3 class="info-heading">Часы работы печи</h3>
+              <table class="hours-table">
+                <tbody>
+                  <tr>
+                    <td class="hours-day">Понедельник, пятница</td>
+                    <td class="hours-time">с 08:00 до 21:00</td>
+                  </tr>
+                  <tr>
+                    <td class="hours-day">Суббота, воскресенье</td>
+                    <td class="hours-time">с 08:00 до 21:00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="info-block">
+              <h3 class="info-heading">Телефон для заказов</h3>
+              <p class="info-text"><a href="tel:+375222741288">+375 (222) 74-12-88</a></p>
+            </div>
+          </div>
+
+          <div class="map-card">
+            <div class="map-visual">
+              <div class="map-pin-box">
+                <span>Первомайская, 31</span>
+              </div>
+              <p class="map-directions">Остановка транспорта «Площадь Звёзд» или «Драматический театр». 2 минуты пешком от перекрестка с улицей Болдина.</p>
+            </div>
+            <a href="https://yandex.by/maps/?text=Могилев+Первомайская+31" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+              Открыть в Яндекс Картах
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Плавающая нижняя панель быстрого заказа (для мобильных и настольных) -->
+  <aside class="order-tray" aria-label="Текущий заказ">
+    <div class="tray-inner">
+      <div class="tray-summary">
+        <span class="tray-count" id="tray-count-text">В заказе: 0 позиций</span>
+        <span class="tray-total" id="tray-total-text">0.00 BYN</span>
+      </div>
+      <div class="hotline-actions">
+        <button type="button" id="tray-reset-btn" class="btn btn-secondary btn-sm">Очистить</button>
+        <button type="button" id="tray-open-cart-btn" class="btn btn-primary btn-sm">Открыть корзину</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Модальная корзина с калькулятором заказа (минимальный заказ от 20.00 BYN) -->
+  <div class="cart-backdrop" id="cart-backdrop" aria-hidden="true"></div>
+
+  <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title" aria-hidden="true">
+    <div class="cart-drawer-head">
+      <div class="cart-head-info">
+        <h2 id="cart-drawer-title" class="cart-drawer-title">Корзина заказа</h2>
+        <span class="cart-min-notice">Минимальный заказ: от 20.00 BYN</span>
+      </div>
+      <button type="button" class="cart-close-btn" id="close-cart-btn" aria-label="Закрыть корзину">✕</button>
+    </div>
+
+    <!-- Индикатор прогресса до минимальной суммы -->
+    <div class="cart-progress-box" aria-live="polite">
+      <div class="cart-progress-status" id="cart-progress-status">
+        До минимального заказа осталось: 20.00 BYN
+      </div>
+      <div class="cart-progress-track">
+        <div class="cart-progress-bar" id="cart-progress-bar" style="transform: scaleX(0);"></div>
+      </div>
+    </div>
+
+    <!-- Список добавленных блюд -->
+    <div class="cart-items-list" id="cart-items-list" role="region" aria-label="Выбранные блюда">
+      <div class="cart-empty-state" id="cart-empty-state">
+        <p class="cart-empty-text">В корзине пока пусто</p>
+        <p class="cart-empty-sub">Выберите горячие смаженки или напитки в меню выше</p>
+      </div>
+    </div>
+
+    <!-- Калькулятор и оформление -->
+    <div class="cart-drawer-footer">
+      <div class="cart-calc-rows">
+        <div class="cart-calc-row">
+          <span>Сумма блюд:</span>
+          <span class="num" id="cart-subtotal-val">0.00 BYN</span>
+        </div>
+        <div class="cart-calc-row">
+          <span>Упаковка в термопакет:</span>
+          <span class="cart-free-tag">Бесплатно</span>
+        </div>
+        <div class="cart-calc-row cart-calc-total">
+          <span>Итого к оплате:</span>
+          <span class="cart-total-val num" id="cart-total-val">0.00 BYN</span>
+        </div>
+      </div>
+
+      <form class="cart-checkout-form" id="cart-checkout-form" novalidate>
+        <div class="form-group">
+          <label for="order-name" class="form-label">Ваше имя</label>
+          <input type="text" id="order-name" class="form-input" placeholder="Иван" required>
+        </div>
+        <div class="form-group">
+          <label for="order-phone" class="form-label">Телефон для связи</label>
+          <input type="tel" id="order-phone" class="form-input" placeholder="+375 (29) 000-00-00" required>
+        </div>
+        <div class="form-group">
+          <label for="order-time" class="form-label">К какому времени приготовить</label>
+          <select id="order-time" class="form-select">
+            <option value="15">Через 15 минут (ближайшая партия)</option>
+            <option value="30">Через 30 минут</option>
+            <option value="45">Через 45 минут</option>
+            <option value="60">Через 1 час</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-checkout" id="checkout-submit-btn" disabled aria-disabled="true">
+          <span id="checkout-btn-text">Минимум 20.00 BYN</span>
+        </button>
+      </form>
+
+      <div class="order-success-message" id="order-success-message" hidden>
+        <div class="success-title">Заказ передан в пекарню!</div>
+        <div class="success-text">Готовим горячими к вашему времени на Первомайской, 31. Детали отправлены повару.</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Подвал сайта -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="footer-title">СМАЖЕНКА</span>
+          <p class="footer-desc">Горячая могилёвская выпечка с пылу с жару. Честные порции, традиционные рецепты и быстрая подача для жителей и гостей города.</p>
+        </div>
+
+        <div>
+          <h3 class="footer-heading">Навигация</h3>
+          <ul class="footer-list">
+            <li><a href="#menu">Меню печи</a></li>
+            <li><a href="#craft">Секрет корочки</a></li>
+            <li><a href="#location">Как добраться</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer-heading">Контакты</h3>
+          <ul class="footer-list">
+            <li>г. Могилёв, ул. Первомайская, 31</li>
+            <li>с 08:00 до 21:00 ежедневно</li>
+            <li><a href="tel:+375222741288">+375 (222) 74-12-88</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 Закусочная Смаженка. Могилёв, Беларусь.</span>
+        <div class="footer-credits">
+          Фотографии: <a href="https://commons.wikimedia.org/wiki/File:Pizza_baker_woman_stone_oven_2.jpg" target="_blank" rel="noopener">Øyvind Holmstad</a> (CC BY-SA 4.0, Wikimedia Commons).
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Скрипт загрузки слотов Hallmark -->
+  <script>
+    window.hallmarkSlots = (m) => {
+      for (const [k, v] of Object.entries(m)) {
+        const s = document.querySelector(`[data-slot="${k}"]`);
+        if (!s) continue;
+        const im = new Image();
+        im.src = typeof v === 'string' ? v : v.src;
+        im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || '';
+        s.querySelectorAll(':scope > img').forEach((o) => o.remove());
+        s.prepend(im);
+      }
+    };
+    document.querySelectorAll('[data-slot] img').forEach((i) => {
+      if (i.complete && !i.naturalWidth) i.remove();
+      else i.addEventListener('error', () => i.remove(), { once: true });
+    });
+  </script>
+
+  <!-- Основной скрипт -->
+  <script src="script.js"></script>
+</body>
+</html>
