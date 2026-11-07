@@ -552,6 +552,7 @@
 .stepper-btn {
   width: 28px;
   height: 28px;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -562,7 +563,15 @@
   font-weight: 700;
   font-size: var(--text-md);
   cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
   transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+}
+
+.stepper-btn::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
 }
 
 .stepper-btn:active {
@@ -809,7 +818,7 @@
   z-index: var(--z-sticky);
   background-color: var(--color-surface);
   border-top: var(--rule-solid) solid var(--color-rule);
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-sm) var(--space-md) max(var(--space-sm), env(safe-area-inset-bottom, 0px));
   box-shadow: var(--shadow-tray);
   transition: transform var(--dur-short) var(--ease-drawer), opacity var(--dur-short) var(--ease-out);
 }
@@ -1017,6 +1026,7 @@ html.js .cart-backdrop.is-open {
   box-shadow: var(--shadow-drawer);
   display: flex;
   flex-direction: column;
+  overscroll-behavior: contain;
   transition: transform var(--dur-short) var(--ease-drawer);
 }
 
@@ -1140,6 +1150,7 @@ html.js .cart-drawer.is-open {
 .cart-items-list {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--space-md);
   display: flex;
   flex-direction: column;
@@ -1502,6 +1513,7 @@ html.js .policy-modal.is-open {
 .policy-modal-body {
   padding: var(--space-md);
   overflow-y: auto;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
@@ -1613,7 +1625,21 @@ html.js .cookie-banner.is-visible {
   .cookie-banner {
     left: var(--space-sm);
     right: var(--space-sm);
-    bottom: var(--space-sm);
+    bottom: max(var(--space-sm), env(safe-area-inset-bottom, 0px));
     max-width: none;
+  }
+}
+
+/* -------------------------------------------------------------
+   Accessibility: Reduced Motion Preference
+   ------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

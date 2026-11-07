@@ -565,20 +565,20 @@
         <div class="delivery-fields" id="delivery-fields" hidden>
           <div class="form-group">
             <label for="order-street" class="form-label">Улица, дом и корпус</label>
-            <input type="text" id="order-street" class="form-input" placeholder="ул. Первомайская, 24">
+            <input type="text" id="order-street" class="form-input" placeholder="ул. Первомайская, 24" autocomplete="street-address">
           </div>
           <div class="form-row-grid">
             <div class="form-group">
               <label for="order-apt" class="form-label">Квартира</label>
-              <input type="text" id="order-apt" class="form-input" placeholder="42">
+              <input type="text" id="order-apt" class="form-input" placeholder="42" inputmode="numeric">
             </div>
             <div class="form-group">
               <label for="order-entrance" class="form-label">Подъезд</label>
-              <input type="text" id="order-entrance" class="form-input" placeholder="2">
+              <input type="text" id="order-entrance" class="form-input" placeholder="2" inputmode="numeric">
             </div>
             <div class="form-group">
               <label for="order-floor" class="form-label">Этаж</label>
-              <input type="text" id="order-floor" class="form-input" placeholder="5">
+              <input type="text" id="order-floor" class="form-input" placeholder="5" inputmode="numeric">
             </div>
           </div>
           <div class="form-group">
@@ -589,11 +589,11 @@
 
         <div class="form-group">
           <label for="order-name" class="form-label">Ваше имя</label>
-          <input type="text" id="order-name" class="form-input" placeholder="Иван" required>
+          <input type="text" id="order-name" class="form-input" placeholder="Иван" autocomplete="name" required>
         </div>
         <div class="form-group">
           <label for="order-phone" class="form-label">Телефон для связи</label>
-          <input type="tel" id="order-phone" class="form-input" placeholder="+375 (29) 700-70-79" required>
+          <input type="tel" id="order-phone" class="form-input" placeholder="+375 (29) 700-70-79" autocomplete="tel" required>
         </div>
         <div class="form-group">
           <label for="order-time" class="form-label">К какому времени приготовить</label>
