@@ -529,6 +529,10 @@
           <span>Сумма блюд:</span>
           <span class="num" id="cart-subtotal-val">0.00 BYN</span>
         </div>
+        <div class="cart-calc-row" id="cart-delivery-row">
+          <span id="cart-delivery-label">Самовывоз:</span>
+          <span class="num" id="cart-delivery-val">Бесплатно</span>
+        </div>
         <div class="cart-calc-row">
           <span>Упаковка в термопакет:</span>
           <span class="cart-free-tag">Бесплатно</span>
@@ -541,11 +545,46 @@
 
       <form class="cart-checkout-form" id="cart-checkout-form" novalidate>
         <div class="form-group">
+          <span class="form-label">Способ получения</span>
+          <div class="delivery-toggle-group" role="radiogroup" aria-label="Способ получения заказа">
+            <button type="button" class="delivery-toggle-btn is-active" id="method-pickup-btn" role="radio" aria-checked="true">Самовывоз</button>
+            <button type="button" class="delivery-toggle-btn" id="method-delivery-btn" role="radio" aria-checked="false">Доставка курьером</button>
+          </div>
+        </div>
+
+        <!-- Поля самовывоза -->
+        <div class="form-group" id="pickup-fields">
           <label for="order-spot" class="form-label">Точка самовывоза</label>
           <select id="order-spot" class="form-select">
             <option value="chel">ул. Челюскинцев, 37</option>
             <option value="stroit">ул. Строителей, 31</option>
           </select>
+        </div>
+
+        <!-- Поля доставки курьером -->
+        <div class="delivery-fields" id="delivery-fields" hidden>
+          <div class="form-group">
+            <label for="order-street" class="form-label">Улица, дом и корпус</label>
+            <input type="text" id="order-street" class="form-input" placeholder="ул. Первомайская, 24">
+          </div>
+          <div class="form-row-grid">
+            <div class="form-group">
+              <label for="order-apt" class="form-label">Квартира</label>
+              <input type="text" id="order-apt" class="form-input" placeholder="42">
+            </div>
+            <div class="form-group">
+              <label for="order-entrance" class="form-label">Подъезд</label>
+              <input type="text" id="order-entrance" class="form-input" placeholder="2">
+            </div>
+            <div class="form-group">
+              <label for="order-floor" class="form-label">Этаж</label>
+              <input type="text" id="order-floor" class="form-input" placeholder="5">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="order-comment" class="form-label">Комментарий курьеру</label>
+            <input type="text" id="order-comment" class="form-input" placeholder="Домофон, подъезд или ориентир">
+          </div>
         </div>
 
         <div class="form-group">
@@ -559,11 +598,21 @@
         <div class="form-group">
           <label for="order-time" class="form-label">К какому времени приготовить</label>
           <select id="order-time" class="form-select">
-            <option value="15">Через 15 минут (ближайшая партия)</option>
+            <option value="15">Как можно скорее (ближайшая партия)</option>
             <option value="30">Через 30 минут</option>
             <option value="45">Через 45 минут</option>
             <option value="60">Через 1 час</option>
           </select>
+        </div>
+
+        <!-- Согласие на обработку персональных данных -->
+        <div class="form-consent-box">
+          <label class="form-checkbox-label">
+            <input type="checkbox" id="order-consent" class="form-checkbox" checked required>
+            <span class="checkbox-text">
+              Даю согласие на <button type="button" id="open-policy-btn" class="policy-link-btn">обработку данных</button> для оформления и доставки заказа.
+            </span>
+          </label>
         </div>
 
         <button type="submit" class="btn btn-primary btn-checkout" id="checkout-submit-btn" disabled aria-disabled="true">
@@ -573,7 +622,7 @@
 
       <div class="order-success-message" id="order-success-message" hidden>
         <div class="success-title">Заказ передан в пекарню!</div>
-        <div class="success-text">Готовим горячими к вашему времени на выбранной точке. Детали отправлены повару.</div>
+        <div class="success-text" id="order-success-text">Готовим горячими к вашему времени на выбранной точке. Детали отправлены повару.</div>
       </div>
     </div>
   </aside>
@@ -639,6 +688,37 @@
       else i.addEventListener('error', () => i.remove(), { once: true });
     });
   </script>
+
+  <!-- Модальное окно политики обработки персональных данных -->
+  <div class="policy-modal-backdrop" id="policy-backdrop" aria-hidden="true"></div>
+  <div class="policy-modal" id="policy-modal" role="dialog" aria-modal="true" aria-labelledby="policy-modal-title" aria-hidden="true">
+    <div class="policy-modal-head">
+      <h3 id="policy-modal-title" class="policy-modal-title">Персональные данные</h3>
+      <button type="button" class="cart-close-btn" id="close-policy-btn" aria-label="Закрыть окно политики">✕</button>
+    </div>
+    <div class="policy-modal-body">
+      <p>Закусочная «Смаженка» (г. Могилёв) со всей ответственностью относится к защите персональной информации своих клиентов.</p>
+      <p><strong>1. Цели обработки:</strong> Указанные вами данные (имя, контактный телефон, адрес доставки и комментарий курьеру) используются исключительно для приготовления блюд, связи для подтверждения и быстрой доставки горячей выпечки.</p>
+      <p><strong>2. Защита и конфиденциальность:</strong> Мы не передаем сведения рекламным агентствам или сторонним базам. Передача адреса и номера телефона допускается только курьеру, доставляющему ваш заказ.</p>
+      <p><strong>3. Срок хранения:</strong> Данные по заказу хранятся только в течение времени исполнения заказа и закрытия текущей смены.</p>
+      <p><strong>4. Обратная связь:</strong> По любым вопросам обработки данных вы можете связаться с нами по прямому телефону пекарни: +375 (29) 700-70-79.</p>
+    </div>
+    <div class="policy-modal-foot">
+      <button type="button" class="btn btn-secondary btn-sm" id="confirm-policy-btn">Понятно</button>
+    </div>
+  </div>
+
+  <!-- Баннер согласия на использование cookie -->
+  <aside class="cookie-banner" id="cookie-banner" role="region" aria-label="Уведомление об использовании файлов cookie">
+    <div class="cookie-banner-content">
+      <p class="cookie-text">
+        Мы используем cookie файлы, чтобы сохранять состав вашей корзины, выбранную точку или адрес доставки. Продолжая пользоваться сайтом, вы соглашаетесь с их использованием.
+      </p>
+      <div class="cookie-actions">
+        <button type="button" class="btn btn-primary btn-sm" id="accept-cookies-btn">Принять</button>
+      </div>
+    </div>
+  </aside>
 
   <!-- Основной скрипт -->
   <script src="script.js"></script>

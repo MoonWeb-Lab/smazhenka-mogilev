@@ -1,5 +1,5 @@
 /**
- * Смаженка Могилёв — Клиентский интерактив, корзина и калькулятор заказа
+ * Смаженка Могилёв: Клиентский интерактив, корзина, доставка и калькулятор заказа
  * Чистый Vanilla JS без фреймворков
  */
 
@@ -10,13 +10,21 @@ document.documentElement.classList.add('js');
 
   // Минимальная сумма заказа для оформления
   const MIN_ORDER_AMOUNT = 20.00;
+  // Стоимость доставки курьером
+  const DELIVERY_FEE = 4.00;
+  // Порог бесплатной доставки
+  const FREE_DELIVERY_THRESHOLD = 40.00;
 
   // Состояние корзины
   const cart = {
     items: {},
     totalCount: 0,
+    subtotal: 0,
     totalPrice: 0
   };
+
+  // Способ получения заказа: 'pickup' (самовывоз) или 'delivery' (доставка курьером)
+  let deliveryMethod = 'pickup';
 
   // 1. Инициализация таймера свежей партии и статуса работы печи
   function initOvenStatus() {
@@ -103,7 +111,7 @@ document.documentElement.classList.add('js');
     });
   }
 
-  // 3. Корзина, калькулятор и минимальный заказ от 20 BYN
+  // 3. Корзина, калькулятор и заказ с доставкой / самовывозом
   function initCartAndOrder() {
     const menuGrid = document.querySelector('.menu-grid');
     const orderTray = document.querySelector('.order-tray');
@@ -119,15 +127,25 @@ document.documentElement.classList.add('js');
     const headerCartBadge = document.getElementById('header-cart-badge');
 
     const cartItemsList = document.getElementById('cart-items-list');
-    const cartEmptyState = document.getElementById('cart-empty-state');
     const cartProgressBar = document.getElementById('cart-progress-bar');
     const cartProgressStatus = document.getElementById('cart-progress-status');
     const cartSubtotalVal = document.getElementById('cart-subtotal-val');
+    const cartDeliveryLabel = document.getElementById('cart-delivery-label');
+    const cartDeliveryVal = document.getElementById('cart-delivery-val');
     const cartTotalVal = document.getElementById('cart-total-val');
     const checkoutSubmitBtn = document.getElementById('checkout-submit-btn');
     const checkoutBtnText = document.getElementById('checkout-btn-text');
     const checkoutForm = document.getElementById('cart-checkout-form');
     const orderSuccessMsg = document.getElementById('order-success-message');
+    const orderSuccessText = document.getElementById('order-success-text');
+
+    // Переключатель способа получения
+    const methodPickupBtn = document.getElementById('method-pickup-btn');
+    const methodDeliveryBtn = document.getElementById('method-delivery-btn');
+    const pickupFields = document.getElementById('pickup-fields');
+    const deliveryFields = document.getElementById('delivery-fields');
+    const orderConsent = document.getElementById('order-consent');
+    const orderStreet = document.getElementById('order-street');
 
     // Открытие и закрытие модальной корзины
     function openCart() {
@@ -171,19 +189,88 @@ document.documentElement.classList.add('js');
       return forms[2];
     }
 
+    // Переключение способа получения (самовывоз или доставка курьером)
+    function setDeliveryMethod(method) {
+      deliveryMethod = method;
+      if (method === 'delivery') {
+        if (methodDeliveryBtn) {
+          methodDeliveryBtn.classList.add('is-active');
+          methodDeliveryBtn.setAttribute('aria-checked', 'true');
+        }
+        if (methodPickupBtn) {
+          methodPickupBtn.classList.remove('is-active');
+          methodPickupBtn.setAttribute('aria-checked', 'false');
+        }
+        if (pickupFields) pickupFields.hidden = true;
+        if (deliveryFields) deliveryFields.hidden = false;
+      } else {
+        if (methodPickupBtn) {
+          methodPickupBtn.classList.add('is-active');
+          methodPickupBtn.setAttribute('aria-checked', 'true');
+        }
+        if (methodDeliveryBtn) {
+          methodDeliveryBtn.classList.remove('is-active');
+          methodDeliveryBtn.setAttribute('aria-checked', 'false');
+        }
+        if (pickupFields) pickupFields.hidden = false;
+        if (deliveryFields) deliveryFields.hidden = true;
+      }
+      updateAllUI();
+    }
+
+    if (methodPickupBtn) {
+      methodPickupBtn.addEventListener('click', () => setDeliveryMethod('pickup'));
+    }
+    if (methodDeliveryBtn) {
+      methodDeliveryBtn.addEventListener('click', () => setDeliveryMethod('delivery'));
+    }
+    if (orderConsent) {
+      orderConsent.addEventListener('change', updateAllUI);
+    }
+
     // Полный пересчет калькулятора и обновление всех компонентов интерфейса
     function updateAllUI() {
       let count = 0;
-      let total = 0;
+      let foodSubtotal = 0;
 
       for (const id in cart.items) {
         const item = cart.items[id];
         count += item.qty;
-        total += item.qty * item.price;
+        foodSubtotal += item.qty * item.price;
       }
 
       cart.totalCount = count;
-      cart.totalPrice = total;
+      cart.subtotal = foodSubtotal;
+
+      // Расчет доставки
+      let currentDeliveryFee = 0;
+      if (deliveryMethod === 'delivery') {
+        if (foodSubtotal >= FREE_DELIVERY_THRESHOLD) {
+          currentDeliveryFee = 0;
+          if (cartDeliveryLabel) cartDeliveryLabel.textContent = 'Доставка курьером:';
+          if (cartDeliveryVal) {
+            cartDeliveryVal.textContent = 'Бесплатно (заказ от 40 BYN)';
+            cartDeliveryVal.className = 'cart-free-tag';
+          }
+        } else {
+          currentDeliveryFee = DELIVERY_FEE;
+          if (cartDeliveryLabel) cartDeliveryLabel.textContent = 'Доставка курьером:';
+          if (cartDeliveryVal) {
+            cartDeliveryVal.textContent = `${DELIVERY_FEE.toFixed(2)} BYN`;
+            cartDeliveryVal.className = 'num';
+          }
+        }
+      } else {
+        currentDeliveryFee = 0;
+        if (cartDeliveryLabel) cartDeliveryLabel.textContent = 'Самовывоз:';
+        if (cartDeliveryVal) {
+          cartDeliveryVal.textContent = 'Бесплатно';
+          cartDeliveryVal.className = 'cart-free-tag';
+        }
+      }
+
+      const orderTotal = count > 0 ? (foodSubtotal + currentDeliveryFee) : 0;
+      cart.totalPrice = orderTotal;
 
       // 1. Шапка сайта
       if (headerCartBadge) {
@@ -199,7 +286,7 @@ document.documentElement.classList.add('js');
             trayCountEl.textContent = `В заказе: ${count} ${word}`;
           }
           if (trayTotalEl) {
-            trayTotalEl.textContent = `${total.toFixed(2)} BYN`;
+            trayTotalEl.textContent = `${orderTotal.toFixed(2)} BYN`;
           }
         } else {
           orderTray.classList.remove('is-visible');
@@ -207,16 +294,18 @@ document.documentElement.classList.add('js');
       }
 
       // 3. Калькулятор корзины
-      if (cartSubtotalVal) cartSubtotalVal.textContent = `${total.toFixed(2)} BYN`;
-      if (cartTotalVal) cartTotalVal.textContent = `${total.toFixed(2)} BYN`;
+      if (cartSubtotalVal) cartSubtotalVal.textContent = `${foodSubtotal.toFixed(2)} BYN`;
+      if (cartTotalVal) cartTotalVal.textContent = `${orderTotal.toFixed(2)} BYN`;
 
       // 4. Прогресс минимального заказа (20.00 BYN)
-      const diff = MIN_ORDER_AMOUNT - total;
-      const progressRatio = Math.min(1, total / MIN_ORDER_AMOUNT);
+      const diff = MIN_ORDER_AMOUNT - foodSubtotal;
+      const progressRatio = Math.min(1, foodSubtotal / MIN_ORDER_AMOUNT);
 
       if (cartProgressBar) {
         cartProgressBar.style.transform = `scaleX(${progressRatio})`;
       }
+
+      const isConsentGiven = !orderConsent || orderConsent.checked;
 
       if (diff > 0) {
         if (cartProgressStatus) {
@@ -231,6 +320,18 @@ document.documentElement.classList.add('js');
         if (checkoutBtnText) {
           checkoutBtnText.textContent = `Добавьте еще на ${diff.toFixed(2)} BYN (минимум 20)`;
         }
+      } else if (!isConsentGiven) {
+        if (cartProgressStatus) {
+          cartProgressStatus.textContent = 'Подтвердите согласие на обработку персональных данных';
+          cartProgressStatus.classList.remove('is-complete');
+        }
+        if (checkoutSubmitBtn) {
+          checkoutSubmitBtn.disabled = true;
+          checkoutSubmitBtn.setAttribute('aria-disabled', 'true');
+        }
+        if (checkoutBtnText) {
+          checkoutBtnText.textContent = 'Требуется согласие на обработку данных';
+        }
       } else {
         if (cartProgressStatus) {
           cartProgressStatus.textContent = 'Минимальный заказ набран! Можно оформлять.';
@@ -242,7 +343,7 @@ document.documentElement.classList.add('js');
           checkoutSubmitBtn.removeAttribute('aria-disabled');
         }
         if (checkoutBtnText) {
-          checkoutBtnText.textContent = `Оформить заказ на ${total.toFixed(2)} BYN`;
+          checkoutBtnText.textContent = `Оформить заказ на ${orderTotal.toFixed(2)} BYN`;
         }
       }
 
@@ -399,17 +500,43 @@ document.documentElement.classList.add('js');
       checkoutForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        if (cart.totalPrice < MIN_ORDER_AMOUNT) {
+        if (cart.subtotal < MIN_ORDER_AMOUNT) {
+          return;
+        }
+
+        if (orderConsent && !orderConsent.checked) {
+          orderConsent.focus();
           return;
         }
 
         const nameInput = document.getElementById('order-name');
         const phoneInput = document.getElementById('order-phone');
 
-        if (!nameInput.value.trim() || !phoneInput.value.trim()) {
-          if (!nameInput.value.trim()) nameInput.focus();
-          else phoneInput.focus();
+        if (!nameInput.value.trim()) {
+          nameInput.focus();
           return;
+        }
+
+        if (!phoneInput.value.trim()) {
+          phoneInput.focus();
+          return;
+        }
+
+        if (deliveryMethod === 'delivery') {
+          if (!orderStreet || !orderStreet.value.trim()) {
+            if (orderStreet) orderStreet.focus();
+            return;
+          }
+        }
+
+        if (orderSuccessText) {
+          if (deliveryMethod === 'delivery') {
+            orderSuccessText.textContent = `Курьер привезет горячий заказ по адресу: ${orderStreet.value.trim()}. Детали переданы в пекарню!`;
+          } else {
+            const spotEl = document.getElementById('order-spot');
+            const spotText = spotEl ? spotEl.options[spotEl.selectedIndex].text : 'выбранной точке';
+            orderSuccessText.textContent = `Готовим горячими к вашему времени на точке: ${spotText}. Ждем вас!`;
+          }
         }
 
         checkoutForm.style.display = 'none';
@@ -420,6 +547,8 @@ document.documentElement.classList.add('js');
           updateAllUI();
           if (orderSuccessMsg) orderSuccessMsg.setAttribute('hidden', '');
           checkoutForm.reset();
+          if (orderConsent) orderConsent.checked = true;
+          setDeliveryMethod('pickup');
           checkoutForm.style.display = 'flex';
           closeCart();
         }, 4000);
@@ -427,7 +556,76 @@ document.documentElement.classList.add('js');
     }
   }
 
-  // 4. Плавный скролл к якорям с учетом липкого заголовка
+  // 4. Модальное окно политики обработки персональных данных
+  function initPolicyModal() {
+    const openBtn = document.getElementById('open-policy-btn');
+    const closeBtn = document.getElementById('close-policy-btn');
+    const confirmBtn = document.getElementById('confirm-policy-btn');
+    const backdrop = document.getElementById('policy-backdrop');
+    const modal = document.getElementById('policy-modal');
+
+    if (!modal || !backdrop) return;
+
+    function openModal() {
+      modal.classList.add('is-open');
+      backdrop.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      backdrop.setAttribute('aria-hidden', 'false');
+      document.addEventListener('keydown', onKeyDown);
+    }
+
+    function closeModal() {
+      modal.classList.remove('is-open');
+      backdrop.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      backdrop.setAttribute('aria-hidden', 'true');
+      document.removeEventListener('keydown', onKeyDown);
+    }
+
+    function onKeyDown(e) {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+        closeModal();
+      }
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (confirmBtn) confirmBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
+  }
+
+  // 5. Уведомление об использовании файлов cookie
+  function initCookieNotice() {
+    const banner = document.getElementById('cookie-banner');
+    const acceptBtn = document.getElementById('accept-cookies-btn');
+
+    if (!banner || !acceptBtn) return;
+
+    const COOKIE_KEY = 'smazhenka_cookie_accepted';
+    let isAccepted = false;
+    try {
+      isAccepted = localStorage.getItem(COOKIE_KEY) === 'true';
+    } catch (e) {
+      // LocalStorage недоступен
+    }
+
+    if (!isAccepted) {
+      setTimeout(() => {
+        banner.classList.add('is-visible');
+      }, 1000);
+    }
+
+    acceptBtn.addEventListener('click', () => {
+      try {
+        localStorage.setItem(COOKIE_KEY, 'true');
+      } catch (e) {
+        // LocalStorage недоступен
+      }
+      banner.classList.remove('is-visible');
+    });
+  }
+
+  // 6. Плавный скролл к якорям с учетом липкого заголовка
   function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {
@@ -454,12 +652,16 @@ document.documentElement.classList.add('js');
       initOvenStatus();
       initMenuFilters();
       initCartAndOrder();
+      initPolicyModal();
+      initCookieNotice();
       initSmoothScroll();
     });
   } else {
     initOvenStatus();
     initMenuFilters();
     initCartAndOrder();
+    initPolicyModal();
+    initCookieNotice();
     initSmoothScroll();
   }
 })();

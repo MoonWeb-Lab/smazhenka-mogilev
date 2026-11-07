@@ -94,6 +94,8 @@
   --shadow-card-hover: 0 10px 24px -4px oklch(22% 0.028 50 / 0.12);
   --shadow-tray: 0 -4px 20px oklch(22% 0.028 50 / 0.08);
   --shadow-drawer: -6px 0 28px oklch(22% 0.028 50 / 0.14);
+  --shadow-cookie: 0 8px 30px oklch(22% 0.028 50 / 0.16);
+  --shadow-modal: 0 16px 48px oklch(22% 0.028 50 / 0.22);
 
   --color-backdrop: oklch(22% 0.028 50 / 0.4);
   --color-progress-bg: oklch(91% 0.02 70);
