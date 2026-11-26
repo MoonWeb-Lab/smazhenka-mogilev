@@ -12,6 +12,126 @@ document.documentElement.classList.add('js');
   const FREE_DELIVERY_THRESHOLD = 40.00;
   const STATE_STORAGE_KEY = 'smazhenka_state_v1';
 
+  const DISHES_DATA = {
+    'smazhenka-pepper-meat': {
+      weight: '140 г',
+      factor: 1.4,
+      image: 'img/dish-pepper.jpg',
+      alt: 'Мясная смаженка с болгарским перцем и сыром',
+      description: 'Горячая смаженка на воздушном опарном тесте с сочным свиным фаршем, сливочным белым соусом, сладким болгарским перцем и расплавленным сыром.',
+      ingredients: 'Тесто дрожжевое опарное (мука пшеничная в/с, вода, дрожжи, сахар, соль, масло подсолнечное), свиной фарш, сладкий болгарский перец, сыр полутвёрдый, белый соус на сметанной основе, чёрный перец.',
+      per100: { kcal: 268, protein: 11.4, fat: 13.8, carbs: 24.5 }
+    },
+    'smazhenka-salami': {
+      weight: '130 г',
+      factor: 1.3,
+      image: 'img/dish-salami.jpg',
+      alt: 'Смаженка с салями и расплавленным сыром',
+      description: 'Классическая могилёвская смаженка с подкопчённой салями, сметанно-яичной заливкой и румяной сырной корочкой прямо с противня.',
+      ingredients: 'Тесто дрожжевое опарное, колбаса салями, сыр полутвёрдый, яйцо куриное, сметана, лук репчатый, специи.',
+      per100: { kcal: 292, protein: 11.8, fat: 16.2, carbs: 24.8 }
+    },
+    'smazhenka-ham-cheese': {
+      weight: '140 г',
+      factor: 1.4,
+      image: 'img/dish-ham.jpg',
+      alt: 'Смаженка ветчина под сыром',
+      description: 'Нежная основа из пышного теста с рубленой фермерской ветчиной и плотным слоем запечённого сыра.',
+      ingredients: 'Тесто дрожжевое опарное, ветчина свиная, сыр твёрдый и полутвёрдый, сметанная заливка, яйцо куриное, укроп.',
+      per100: { kcal: 256, protein: 12.1, fat: 12.4, carbs: 23.9 }
+    },
+    'smazhenka-mushrooms': {
+      weight: '135 г',
+      factor: 1.35,
+      image: 'img/dish-mushroom.jpg',
+      alt: 'Грибная смаженка с жареным луком',
+      description: 'Ароматные шампиньоны, обжаренные до золотистости с репчатым луком, под сливочной заливкой и слоем тягучего сыра.',
+      ingredients: 'Тесто дрожжевое опарное, шампиньоны свежие, лук репчатый, сыр полутвёрдый, сметана, яйцо куриное, масло подсолнечное, соль, перец.',
+      per100: { kcal: 234, protein: 9.2, fat: 10.6, carbs: 25.4 }
+    },
+    'smazhenka-tuna': {
+      weight: '135 г',
+      factor: 1.35,
+      image: 'img/dish-tuna.jpg',
+      alt: 'Смаженка с филе тунца и сыром',
+      description: 'Сытная смаженка с филе тунца, сладковатым репчатым луком и нежной яично-сливочной шапочкой.',
+      ingredients: 'Тесто дрожжевое опарное, тунец консервированный в собственном соку, лук репчатый, сыр полутвёрдый, яйцо куриное, сметана, специи.',
+      per100: { kcal: 238, protein: 13.5, fat: 9.4, carbs: 24.9 }
+    },
+    'smazhenka-shrimp': {
+      weight: '140 г',
+      factor: 1.4,
+      image: 'img/dish-shrimp.jpg',
+      alt: 'Смаженка с королевскими креветками и моцареллой',
+      description: 'Королевские креветки в мягком сливочно-чесночном соусе под золотистой корочкой из моцареллы.',
+      ingredients: 'Тесто дрожжевое опарное, креветки очищенные, сыр моцарелла, сливки, чеснок свежий, масло сливочное, зелень петрушки.',
+      per100: { kcal: 248, protein: 13.2, fat: 10.8, carbs: 24.4 }
+    },
+    'smazhenka-four-cheese': {
+      weight: '135 г',
+      factor: 1.35,
+      image: 'img/dish-four-cheese.jpg',
+      alt: 'Смаженка Четыре сыра с зеленью',
+      description: 'Насыщенная сырная начинка из четырёх видов сыра на пышном тесте со свежей зеленью.',
+      ingredients: 'Тесто дрожжевое опарное, сыр моцарелла, сыр голландский, сулугуни, сыр творожный, сливки, укроп и петрушка.',
+      per100: { kcal: 288, protein: 13.6, fat: 15.8, carbs: 22.9 }
+    },
+    'smazhenka-chicken-pineapple': {
+      weight: '140 г',
+      factor: 1.4,
+      image: 'img/dish-chicken.jpg',
+      alt: 'Смаженка с курицей и ананасом под сыром',
+      description: 'Филе куриной грудки, сочные кусочки ананаса и мягкий сливочный соус под запечённым сыром.',
+      ingredients: 'Тесто дрожжевое опарное, куриное филе запечённое, ананас консервированный, сыр полутвёрдый, белый сливочный соус, специи.',
+      per100: { kcal: 244, protein: 12.8, fat: 9.8, carbs: 26.1 }
+    },
+    'smazhenka-student': {
+      weight: '145 г',
+      factor: 1.45,
+      image: 'img/dish-student.jpg',
+      alt: 'Смаженка студенческая с курицей и картофелем',
+      description: 'Самая сытная смаженка в меню: рубленое филе цыплёнка, нежный картофельный слой и хрустящая сырная корочка.',
+      ingredients: 'Тесто дрожжевое опарное, филе цыплёнка, картофель отварной, сыр полутвёрдый, лук, сметанная заливка, чёрный перец.',
+      per100: { kcal: 242, protein: 11.2, fat: 9.6, carbs: 27.6 }
+    },
+    'drink-broth': {
+      weight: '250 мл',
+      factor: 2.5,
+      image: 'img/dish-broth.jpg',
+      alt: 'Горячий куриный бульон с зеленью',
+      description: 'Наваристый горячий куриный бульон со свежим укропом и щепоткой чёрного перца в стакане с крышкой.',
+      ingredients: 'Бульон куриный на кости и филе, морковь, лук репчатый, укроп свежий, лавровый лист, соль, перец чёрный.',
+      per100: { kcal: 36, protein: 3.4, fat: 1.8, carbs: 1.5 }
+    },
+    'drink-morse': {
+      weight: '300 мл',
+      factor: 3.0,
+      image: 'img/dish-morse.jpg',
+      alt: 'Домашний клюквенный морс в стакане',
+      description: 'Освежающий кисло-сладкий морс из цельной полесской клюквы, сваренный в пекарне без красителей.',
+      ingredients: 'Вода питьевая очищенная, клюква свежемороженая, сахар белый.',
+      per100: { kcal: 42, protein: 0.1, fat: 0.1, carbs: 10.2 }
+    },
+    'drink-coffee': {
+      weight: '200 мл',
+      factor: 2.0,
+      image: 'img/dish-coffee.jpg',
+      alt: 'Свежесваренный кофе с молочной пенкой',
+      description: 'Бодрящий американо или мягкий капучино из свежемолотых зёрен арабики.',
+      ingredients: 'Зерновой кофе 100% арабика, вода очищенная, молоко пастеризованное 3.2% (для капучино).',
+      per100: { kcal: 32, protein: 1.6, fat: 1.7, carbs: 2.6 }
+    },
+    'drink-tea': {
+      weight: '300 мл',
+      factor: 3.0,
+      image: 'img/dish-tea.jpg',
+      alt: 'Горячий чай с долькой лимона',
+      description: 'Классический горячий чёрный, зелёный или травяной чай с долькой свежего лимона.',
+      ingredients: 'Вода питьевая, заварка листовая на выбор (чёрный, зелёный, травяной сбор), лимон свежий.',
+      per100: { kcal: 4, protein: 0.1, fat: 0.0, carbs: 0.9 }
+    }
+  };
+
   const cart = {
     items: {},
     totalCount: 0,
@@ -212,6 +332,21 @@ document.documentElement.classList.add('js');
   function initCartAndOrder() {
     const menuGrid = document.querySelector('.menu-grid');
     const orderTray = document.querySelector('.order-tray');
+    const dishBackdrop = document.getElementById('dish-backdrop');
+    const dishModal = document.getElementById('dish-modal');
+    const closeDishBtn = document.getElementById('close-dish-btn');
+    const dishModalImg = document.getElementById('dish-modal-img');
+    const dishModalTitle = document.getElementById('dish-modal-title');
+    const dishModalWeight = document.getElementById('dish-modal-weight');
+    const dishModalPrice = document.getElementById('dish-modal-price');
+    const dishModalDesc = document.getElementById('dish-modal-desc');
+    const dishModalIngredients = document.getElementById('dish-modal-ingredients');
+    const dishPortionCol = document.getElementById('dish-portion-col');
+    const dishNutritionBody = document.getElementById('dish-nutrition-body');
+    const dishQtyDec = document.getElementById('dish-qty-dec');
+    const dishQtyInc = document.getElementById('dish-qty-inc');
+    const dishQtyVal = document.getElementById('dish-qty-val');
+    const dishAddBtn = document.getElementById('dish-add-btn');
     const trayCountEl = document.getElementById('tray-count-text');
     const trayTotalEl = document.getElementById('tray-total-text');
     const trayResetBtn = document.getElementById('tray-reset-btn');
@@ -252,6 +387,129 @@ document.documentElement.classList.add('js');
     const phoneError = document.getElementById('phone-error');
 
     let lastFocusedBeforeCart = null;
+    let lastFocusedBeforeDish = null;
+    let activeDish = null;
+    let activeDishQty = 1;
+
+    function renderNutritionRows(per100, factor) {
+      if (!dishNutritionBody) return;
+      dishNutritionBody.replaceChildren();
+      const rows = [
+        ['Калории', `${Math.round(per100.kcal)} ккал`, `${Math.round(per100.kcal * factor)} ккал`],
+        ['Белки', `${per100.protein.toFixed(1)} г`, `${(per100.protein * factor).toFixed(1)} г`],
+        ['Жиры', `${per100.fat.toFixed(1)} г`, `${(per100.fat * factor).toFixed(1)} г`],
+        ['Углеводы', `${per100.carbs.toFixed(1)} г`, `${(per100.carbs * factor).toFixed(1)} г`]
+      ];
+      for (const [label, val100, valPortion] of rows) {
+        const tr = document.createElement('tr');
+        const tdLabel = document.createElement('td');
+        tdLabel.textContent = label;
+        const td100 = document.createElement('td');
+        td100.className = 'num';
+        td100.textContent = val100;
+        const tdPortion = document.createElement('td');
+        tdPortion.className = 'num';
+        tdPortion.textContent = valPortion;
+        tr.append(tdLabel, td100, tdPortion);
+        dishNutritionBody.appendChild(tr);
+      }
+    }
+
+    function updateDishModalAddBtn() {
+      if (!activeDish || !dishQtyVal || !dishAddBtn) return;
+      dishQtyVal.textContent = String(activeDishQty);
+      const total = (activeDish.price * activeDishQty).toFixed(2);
+      dishAddBtn.textContent = `Добавить в корзину: ${total} BYN`;
+    }
+
+    function openDishModal(card) {
+      if (!dishModal || !dishBackdrop || !card) return;
+      const id = card.getAttribute('data-id');
+      const price = parseFloat(card.getAttribute('data-price') || '0');
+      const name = card.querySelector('.menu-card-trigger')?.textContent?.trim()
+        || card.querySelector('.menu-card-name')?.textContent?.trim()
+        || '';
+      const data = DISHES_DATA[id];
+      if (!data) return;
+
+      activeDish = { id, price, name };
+      activeDishQty = 1;
+      lastFocusedBeforeDish = document.activeElement;
+
+      if (dishModalImg) {
+        dishModalImg.src = data.image;
+        dishModalImg.alt = data.alt;
+      }
+      if (dishModalTitle) dishModalTitle.textContent = name;
+      if (dishModalWeight) dishModalWeight.textContent = data.weight;
+      if (dishModalPrice) dishModalPrice.textContent = `${price.toFixed(2)} BYN`;
+      if (dishModalDesc) dishModalDesc.textContent = data.description;
+      if (dishModalIngredients) dishModalIngredients.textContent = data.ingredients;
+      if (dishPortionCol) dishPortionCol.textContent = `На порцию (${data.weight})`;
+
+      renderNutritionRows(data.per100, data.factor);
+      updateDishModalAddBtn();
+
+      dishModal.classList.add('is-open');
+      dishBackdrop.classList.add('is-open');
+      dishModal.setAttribute('aria-hidden', 'false');
+      dishBackdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', onDishKeyDown);
+      if (closeDishBtn) closeDishBtn.focus();
+    }
+
+    function closeDishModal() {
+      if (!dishModal || !dishBackdrop) return;
+      dishModal.classList.remove('is-open');
+      dishBackdrop.classList.remove('is-open');
+      dishModal.setAttribute('aria-hidden', 'true');
+      dishBackdrop.setAttribute('aria-hidden', 'true');
+      if (!cartDrawer || !cartDrawer.classList.contains('is-open')) {
+        document.body.style.overflow = '';
+      }
+      document.removeEventListener('keydown', onDishKeyDown);
+      if (lastFocusedBeforeDish && typeof lastFocusedBeforeDish.focus === 'function') {
+        lastFocusedBeforeDish.focus();
+      }
+    }
+
+    function onDishKeyDown(e) {
+      if (e.key === 'Escape' && dishModal && dishModal.classList.contains('is-open')) {
+        closeDishModal();
+      }
+    }
+
+    if (closeDishBtn) closeDishBtn.addEventListener('click', closeDishModal);
+    if (dishBackdrop) dishBackdrop.addEventListener('click', closeDishModal);
+    if (dishQtyDec) {
+      dishQtyDec.addEventListener('click', () => {
+        if (activeDishQty > 1) {
+          activeDishQty -= 1;
+          updateDishModalAddBtn();
+        }
+      });
+    }
+    if (dishQtyInc) {
+      dishQtyInc.addEventListener('click', () => {
+        activeDishQty += 1;
+        updateDishModalAddBtn();
+      });
+    }
+    if (dishAddBtn) {
+      dishAddBtn.addEventListener('click', () => {
+        if (!activeDish) return;
+        const { id, price, name } = activeDish;
+        if (cart.items[id]) {
+          cart.items[id].qty += activeDishQty;
+        } else {
+          cart.items[id] = { qty: activeDishQty, price, name };
+        }
+        resetSuccessView();
+        updateAllUI();
+        closeDishModal();
+      });
+    }
 
     if (orderSpot) {
       orderSpot.value = selectedSpot;
@@ -610,10 +868,13 @@ document.documentElement.classList.add('js');
           if (!card) return;
           const id = card.getAttribute('data-id');
           const price = parseFloat(card.getAttribute('data-price') || '0');
-          const name = card.querySelector('.menu-card-name')?.textContent?.trim() || '';
+          const name = card.querySelector('.menu-card-trigger')?.textContent?.trim()
+            || card.querySelector('.menu-card-name')?.textContent?.trim()
+            || '';
           cart.items[id] = { qty: 1, price, name };
           resetSuccessView();
           updateAllUI();
+          return;
         }
 
         if (stepBtn) {
@@ -622,6 +883,14 @@ document.documentElement.classList.add('js');
           const id = card.getAttribute('data-id');
           const action = stepBtn.getAttribute('data-action');
           updateItemQty(id, action === 'increase' ? 1 : -1);
+          return;
+        }
+
+        if (e.target.closest('.stepper')) return;
+
+        const card = e.target.closest('.menu-card');
+        if (card) {
+          openDishModal(card);
         }
       });
     }

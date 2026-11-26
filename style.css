@@ -550,24 +550,31 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: var(--space-md);
+  cursor: pointer;
   transition: transform var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .menu-card:hover {
-    transform: translateY(-2px);
+    transform: translate3d(0, -2px, 0);
     border-color: var(--border-strong);
     box-shadow: var(--shadow-sm);
+  }
+  .menu-card:hover .menu-card-thumb img {
+    transform: scale(1.06);
+  }
+  .menu-card:hover .menu-card-trigger {
+    color: var(--accent-red);
   }
 }
 
 .menu-card-thumb {
   width: 96px;
   height: 96px;
+  aspect-ratio: 1 / 1;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  border: 1px solid var(--border);
-  background-color: var(--bg-page);
+  background-color: var(--bg-subtle);
   align-self: center;
   flex-shrink: 0;
 }
@@ -576,6 +583,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform var(--dur-short) var(--ease-out);
 }
 
 .menu-card-body {
@@ -587,8 +595,8 @@
 .menu-card-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 8px;
+  align-items: baseline;
+  gap: 4px 10px;
   margin-bottom: 4px;
 }
 
@@ -602,21 +610,30 @@
   word-break: normal;
 }
 
+.menu-card-trigger {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--dur-micro) var(--ease-out);
+}
+
 .menu-badge {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
 .menu-badge-red {
-  background-color: var(--accent-red-soft);
   color: var(--accent-red);
 }
 
 .menu-badge-gold {
-  background-color: var(--accent-gold-soft);
   color: var(--accent-gold-ink);
 }
 
@@ -1531,6 +1548,223 @@ html.js .cart-drawer.is-open {
 }
 
 /* -------------------------------------------------------------
+   Dish Detail Modal (Flat Editorial Layout, No Nested Cards)
+   ------------------------------------------------------------- */
+.dish-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-modal) - 1);
+  background-color: var(--color-backdrop);
+  backdrop-filter: blur(3px);
+  transition: opacity var(--dur-short) var(--ease-out);
+}
+
+html.js .dish-modal-backdrop {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.js .dish-modal-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dish-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  z-index: var(--z-modal);
+  width: min(540px, calc(100% - var(--space-md) * 2));
+  max-height: calc(100vh - var(--space-lg) * 2);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform var(--dur-short) var(--ease-out), opacity var(--dur-short) var(--ease-out);
+}
+
+html.js .dish-modal {
+  transform: translate3d(-50%, -50%, 0) scale(0.96);
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.js .dish-modal.is-open {
+  transform: translate3d(-50%, -50%, 0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dish-close-btn {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background-color: rgba(255, 253, 248, 0.94);
+  color: var(--text-primary);
+  font-size: var(--text-md);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+}
+
+.dish-close-btn:active {
+  transform: scale(0.92);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dish-close-btn:hover {
+    background-color: var(--bg-surface);
+  }
+}
+
+.dish-modal-media {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  max-height: 235px;
+  background-color: var(--bg-subtle);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.dish-modal-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dish-modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dish-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.dish-modal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.dish-modal-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.dish-modal-weight {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.dish-modal-price {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--accent-red);
+  white-space: nowrap;
+}
+
+.dish-modal-desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.dish-modal-section {
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dish-section-label {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.dish-modal-ingredients {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.nutrition-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.nutrition-table th,
+.nutrition-table td {
+  padding-block: 7px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.nutrition-table th {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.nutrition-table th.num,
+.nutrition-table td.num {
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.nutrition-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.dish-modal-foot {
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--border);
+  background-color: var(--bg-page);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.dish-add-btn {
+  flex: 1;
+}
+
+/* -------------------------------------------------------------
    Privacy Policy Modal
    ------------------------------------------------------------- */
 .policy-modal-backdrop {
@@ -1746,6 +1980,20 @@ body.has-order-tray .cookie-banner {
   .menu-card-thumb {
     width: 80px;
     height: 80px;
+  }
+  .dish-modal {
+    width: calc(100% - var(--space-sm) * 2);
+    max-height: calc(100vh - var(--space-md) * 2);
+  }
+  .dish-modal-body {
+    padding: var(--space-md);
+  }
+  .dish-modal-foot {
+    padding: var(--space-sm) var(--space-md);
+  }
+  .dish-modal-header {
+    flex-direction: column;
+    gap: var(--space-2xs);
   }
   .hotline-card {
     padding: var(--space-md);
