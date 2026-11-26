@@ -18,7 +18,7 @@ export interface DishItem {
   alt: string;
   badge?: {
     label: string;
-    tone: 'red' | 'gold';
+    tone: 'amber' | 'charcoal';
   };
   shortDesc: string;
   description: string;

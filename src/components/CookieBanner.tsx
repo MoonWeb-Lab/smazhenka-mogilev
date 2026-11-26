@@ -46,13 +46,13 @@ export function CookieBanner({ hasOrderTray }: CookieBannerProps) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 24, opacity: 0 }}
           transition={{ duration: 0.25, ease: EMIL_EASE_OUT }}
-          className={`fixed left-3 right-3 z-30 rounded-[10px] border border-bakery-border bg-bakery-surface p-4 shadow-lg sm:left-4 sm:right-auto sm:max-w-[400px] ${
+          className={`fixed left-3 right-3 z-30 rounded-2xl border border-bakery-border bg-bakery-surface p-4 shadow-sm sm:left-4 sm:right-auto sm:max-w-[390px] ${
             hasOrderTray ? 'bottom-[88px]' : 'bottom-3 sm:bottom-4'
           }`}
         >
           <div className="flex flex-col gap-3">
             <p className="text-xs leading-relaxed text-bakery-secondary">
-              Мы используем cookie и локальное хранилище, чтобы сохранять состав корзины, выбранную точку или адрес доставки.
+              Сохраняем выбранные блюда и точку самовывоза в памяти браузера, чтобы корзина не сбрасывалась при обновлении страницы.
             </p>
             <div className="flex justify-end">
               <motion.button
@@ -61,9 +61,9 @@ export function CookieBanner({ hasOrderTray }: CookieBannerProps) {
                 whileTap={{ scale: 0.96 }}
                 transition={SPRING_SNAPPY}
                 onClick={handleAccept}
-                className="rounded-md bg-bakery-red px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-bakery-redHover"
+                className="rounded-lg bg-bakery-charcoal px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-bakery-charcoalHover"
               >
-                Принять
+                Хорошо
               </motion.button>
             </div>
           </div>

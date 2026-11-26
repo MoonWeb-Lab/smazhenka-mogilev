@@ -114,7 +114,7 @@ export function CheckoutForm({
       <div className="flex flex-col gap-1">
         <span className="text-xs font-semibold text-bakery-secondary">Способ получения</span>
         <div
-          className="grid grid-cols-2 gap-1 rounded-md border border-bakery-border bg-bakery-subtle p-1"
+          className="grid grid-cols-2 gap-1 rounded-lg bg-bakery-subtle p-1"
           role="radiogroup"
           aria-label="Способ получения заказа"
         >
@@ -127,9 +127,9 @@ export function CheckoutForm({
               onDeliveryMethodChange('pickup');
               setStreetError('');
             }}
-            className={`rounded px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+            className={`rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors ${
               deliveryMethod === 'pickup'
-                ? 'border border-bakery-border bg-bakery-surface text-bakery-ink shadow-xs'
+                ? 'bg-bakery-surface text-bakery-ink shadow-xs'
                 : 'text-bakery-secondary'
             }`}
           >
@@ -141,9 +141,9 @@ export function CheckoutForm({
             role="radio"
             aria-checked={deliveryMethod === 'delivery'}
             onClick={() => onDeliveryMethodChange('delivery')}
-            className={`rounded px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+            className={`rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors ${
               deliveryMethod === 'delivery'
-                ? 'border border-bakery-border bg-bakery-surface text-bakery-ink shadow-xs'
+                ? 'bg-bakery-surface text-bakery-ink shadow-xs'
                 : 'text-bakery-secondary'
             }`}
           >
@@ -161,7 +161,7 @@ export function CheckoutForm({
             id="order-spot"
             value={selectedSpot}
             onChange={(e) => onSelectedSpotChange(e.target.value as PickupSpotId)}
-            className="h-9 w-full rounded-md border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink"
+            className="h-9 w-full rounded-lg border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink"
           >
             <option value="chel">ул. Челюскинцев, 37</option>
             <option value="stroit">ул. Строителей, 31</option>
@@ -184,7 +184,7 @@ export function CheckoutForm({
               }}
               placeholder="ул. Первомайская, 24"
               autoComplete="street-address"
-              className={`h-9 w-full rounded-md border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled ${
+              className={`h-9 w-full rounded-lg border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled ${
                 streetError ? 'border-bakery-error' : 'border-bakery-border'
               }`}
             />
@@ -207,7 +207,7 @@ export function CheckoutForm({
                 onChange={(e) => setApt(e.target.value)}
                 placeholder="42"
                 inputMode="numeric"
-                className="h-9 w-full rounded-md border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled"
+                className="h-9 w-full rounded-lg border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -221,7 +221,7 @@ export function CheckoutForm({
                 onChange={(e) => setEntrance(e.target.value)}
                 placeholder="2"
                 inputMode="numeric"
-                className="h-9 w-full rounded-md border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled"
+                className="h-9 w-full rounded-lg border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -235,7 +235,7 @@ export function CheckoutForm({
                 onChange={(e) => setFloor(e.target.value)}
                 placeholder="5"
                 inputMode="numeric"
-                className="h-9 w-full rounded-md border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled"
+                className="h-9 w-full rounded-lg border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled"
               />
             </div>
           </div>
@@ -250,7 +250,7 @@ export function CheckoutForm({
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Домофон, подъезд или ориентир"
-              className="h-9 w-full rounded-md border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled"
+              className="h-9 w-full rounded-lg border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled"
             />
           </div>
         </div>
@@ -271,7 +271,7 @@ export function CheckoutForm({
           }}
           placeholder="Иван"
           autoComplete="name"
-          className={`h-9 w-full rounded-md border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled ${
+          className={`h-9 w-full rounded-lg border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled ${
             nameError ? 'border-bakery-error' : 'border-bakery-border'
           }`}
         />
@@ -297,7 +297,7 @@ export function CheckoutForm({
           }}
           placeholder="+375 (29) 700-70-79"
           autoComplete="tel"
-          className={`h-9 w-full rounded-md border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled ${
+          className={`h-9 w-full rounded-lg border bg-bakery-surface px-3 text-sm text-bakery-ink placeholder:text-bakery-disabled ${
             phoneError ? 'border-bakery-error' : 'border-bakery-border'
           }`}
         />
@@ -316,7 +316,7 @@ export function CheckoutForm({
           id="order-time"
           value={readyTime}
           onChange={(e) => setReadyTime(e.target.value)}
-          className="h-9 w-full rounded-md border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink"
+          className="h-9 w-full rounded-lg border border-bakery-border bg-bakery-surface px-3 text-sm text-bakery-ink"
         >
           <option value="15">Как можно скорее</option>
           <option value="30">Через 30 минут</option>
@@ -332,7 +332,7 @@ export function CheckoutForm({
             type="checkbox"
             checked={consent}
             onChange={(e) => setConsent(e.target.checked)}
-            className="mt-0.5 h-4 w-4 accent-bakery-red"
+            className="mt-0.5 h-4 w-4 accent-bakery-amber"
           />
           <span className="text-xs leading-snug text-bakery-textMuted">
             Даю согласие на{' '}
@@ -340,7 +340,7 @@ export function CheckoutForm({
               type="button"
               id="open-policy-btn"
               onClick={onOpenPolicy}
-              className="border-0 bg-transparent p-0 font-inherit text-bakery-red underline"
+              className="border-0 bg-transparent p-0 font-inherit text-bakery-amberInk underline"
             >
               обработку данных
             </button>{' '}
@@ -356,10 +356,10 @@ export function CheckoutForm({
         transition={SPRING_SNAPPY}
         disabled={!canCheckout}
         aria-disabled={!canCheckout}
-        className={`w-full whitespace-nowrap rounded-md px-4 py-2.5 text-sm font-semibold transition-colors ${
+        className={`w-full whitespace-nowrap rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${
           canCheckout
-            ? 'bg-bakery-red text-white hover:bg-bakery-redHover'
-            : 'cursor-not-allowed border border-bakery-border bg-bakery-muted text-bakery-textMuted opacity-60'
+            ? 'bg-bakery-charcoal text-white hover:bg-bakery-charcoalHover'
+            : 'cursor-not-allowed bg-bakery-muted text-bakery-textMuted opacity-70'
         }`}
       >
         <span id="checkout-btn-text">{submitLabel}</span>

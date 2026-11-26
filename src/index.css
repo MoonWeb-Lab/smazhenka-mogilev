@@ -2,11 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bakery-page: #F7F5F0;
+  --bakery-surface: #FFFFFF;
+  --bakery-subtle: #EFECE4;
+  --bakery-ink: #161513;
+  --bakery-secondary: #423F3B;
+  --bakery-muted: #68635B;
+  --bakery-accent: #D96B1B;
+  --bakery-accent-ink: #8A400B;
+  --bakery-border: #E6E2D8;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 84px;
-    scrollbar-color: #cfc9be #fffdf8;
+    scrollbar-color: #cbc5b8 #f7f5f0;
   }
 
   html,
@@ -16,12 +28,12 @@
 
   body {
     margin: 0;
-    background-color: #fffdf8;
-    color: #141414;
+    background-color: var(--bakery-page);
+    color: var(--bakery-ink);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
-    caret-color: #d9381e;
+    caret-color: var(--bakery-accent);
   }
 
   h1,
@@ -33,13 +45,13 @@
   }
 
   ::selection {
-    background: rgba(217, 56, 30, 0.16);
-    color: #141414;
+    background: rgba(217, 107, 27, 0.18);
+    color: #161513;
   }
 
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px #fffdf8, 0 0 0 4px #d9381e;
+    box-shadow: 0 0 0 2px #f7f5f0, 0 0 0 4px #d96b1b;
   }
 }
 

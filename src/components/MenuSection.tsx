@@ -40,9 +40,9 @@ export function MenuSection({
       className="border-b border-bakery-border bg-bakery-page py-12 sm:py-[72px]"
       aria-labelledby="menu-title"
     >
-      <div className="mx-auto max-w-[1160px] px-4 sm:px-5 lg:px-6">
-        <header className="mb-6 flex flex-col gap-1.5">
-          <span className="text-xs font-bold uppercase tracking-wider text-bakery-red">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+        <header className="mb-7 flex flex-col gap-1.5">
+          <span className="text-xs font-bold uppercase tracking-wider text-bakery-amberInk">
             Меню пекарни
           </span>
           <h2
@@ -51,15 +51,15 @@ export function MenuSection({
           >
             Свежие смаженки и напитки
           </h2>
-          <p className="max-w-[56ch] text-base text-bakery-textMuted">
-            Нажмите на блюдо, чтобы посмотреть полный состав и КБЖУ. Самовывоз и доставка доступны от 20.00 BYN.
+          <p className="max-w-[58ch] text-base text-bakery-textMuted">
+            Нажмите на любое блюдо, чтобы увидеть полный состав и КБЖУ. Самовывоз и доставка доступны от 20.00 BYN.
           </p>
         </header>
 
-        <div className="sticky top-16 z-10 -mx-4 mb-6 bg-bakery-page/90 px-4 py-2 backdrop-blur-md sm:-mx-5 sm:px-5 lg:-mx-6 lg:px-6">
+        <div className="sticky top-16 z-10 -mx-4 mb-9 border-b border-bakery-border bg-bakery-page/90 px-4 py-2.5 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <LayoutGroup>
             <div
-              className="no-scrollbar inline-flex max-w-full gap-1 overflow-x-auto rounded-[10px] border border-bakery-border bg-bakery-subtle p-1"
+              className="no-scrollbar flex max-w-full gap-1 overflow-x-auto"
               role="tablist"
               aria-label="Категории меню"
             >
@@ -75,17 +75,17 @@ export function MenuSection({
                     data-category={tab.id}
                     onClick={() => setActiveCategory(tab.id)}
                     onKeyDown={(e) => handleTabKeyDown(e, index)}
-                    className={`menu-tab relative shrink-0 rounded-md px-3.5 py-2 text-sm transition-colors ${
+                    className={`menu-tab relative shrink-0 rounded-full px-4 py-2 text-sm transition-colors ${
                       isActive
-                        ? 'is-active font-semibold text-bakery-ink'
-                        : 'font-medium text-bakery-secondary hover:text-bakery-ink'
+                        ? 'is-active font-semibold text-white'
+                        : 'font-medium text-bakery-secondary hover:bg-bakery-subtle hover:text-bakery-ink'
                     }`}
                   >
                     {isActive && (
                       <motion.span
                         layoutId="activeMenuTab"
                         transition={SPRING_SNAPPY}
-                        className="absolute inset-0 rounded-md border border-bakery-border bg-bakery-surface shadow-xs"
+                        className="absolute inset-0 rounded-full bg-bakery-charcoal"
                         aria-hidden="true"
                       />
                     )}
@@ -97,7 +97,7 @@ export function MenuSection({
           </LayoutGroup>
         </div>
 
-        <div className="menu-grid grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="menu-grid grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
           {visibleDishes.map((dish, idx) => {
             const qty = quantities[dish.id] || 0;
             return (
@@ -106,65 +106,62 @@ export function MenuSection({
                 data-id={dish.id}
                 data-category={dish.category}
                 data-price={dish.price.toFixed(2)}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  duration: 0.28,
-                  delay: Math.min(idx * 0.025, 0.15),
+                  duration: 0.3,
+                  delay: Math.min(idx * 0.025, 0.16),
                   ease: EMIL_EASE_OUT,
                 }}
-                whileHover={{ y: -2 }}
                 onClick={(e) => {
                   const target = e.target as HTMLElement;
                   if (target.closest('.item-btn') || target.closest('.stepper')) return;
                   onSelectDish(dish);
                 }}
-                className="menu-card group grid cursor-pointer grid-cols-[80px_minmax(0,1fr)] items-stretch gap-3 rounded-[10px] border border-bakery-border bg-bakery-surface p-3 transition-colors hover:border-bakery-borderStrong sm:grid-cols-[96px_minmax(0,1fr)] sm:gap-4 sm:p-4"
+                className="menu-card group flex cursor-pointer flex-col"
               >
-                <div className="menu-card-thumb aspect-square h-20 w-20 shrink-0 self-center overflow-hidden rounded-md bg-bakery-subtle sm:h-24 sm:w-24">
+                <div className="menu-card-thumb aspect-[4/3] w-full overflow-hidden rounded-2xl bg-bakery-subtle">
                   <img
                     src={dish.image}
                     alt={dish.alt}
-                    width={96}
-                    height={96}
+                    width={640}
+                    height={480}
                     loading="lazy"
                     decoding="async"
-                    className="h-full w-full object-cover transition-transform duration-200 ease-out group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
                   />
                 </div>
 
-                <div className="flex min-w-0 flex-col">
-                  <div className="mb-1 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-                    <h3 className="font-display text-[1.0625rem] font-bold leading-snug text-bakery-ink sm:text-[1.15rem]">
+                <div className="flex flex-1 flex-col pt-4">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 className="font-display text-lg font-bold leading-snug text-bakery-ink">
                       <button
                         type="button"
                         onClick={() => onSelectDish(dish)}
-                        className="menu-card-trigger border-0 bg-transparent p-0 text-left font-inherit text-inherit transition-colors group-hover:text-bakery-red"
+                        className="menu-card-trigger border-0 bg-transparent p-0 text-left font-inherit text-inherit transition-colors group-hover:text-bakery-amberInk"
                       >
                         {dish.name}
                       </button>
                     </h3>
                     {dish.badge && (
-                      <span
-                        className={`menu-badge text-[11px] font-bold uppercase tracking-wide ${
-                          dish.badge.tone === 'red' ? 'text-bakery-red' : 'text-bakery-goldInk'
-                        }`}
-                      >
+                      <span className="menu-badge shrink-0 text-[11px] font-bold uppercase tracking-wider text-bakery-amberInk">
                         {dish.badge.label}
                       </span>
                     )}
                   </div>
 
-                  <p className="menu-card-desc mb-3 flex-grow text-sm leading-snug text-bakery-textMuted">
+                  <p className="menu-card-desc mt-1.5 flex-grow text-sm leading-relaxed text-bakery-textMuted">
                     {dish.shortDesc}
                   </p>
 
-                  <div className="flex items-center justify-between gap-2 border-t border-bakery-border pt-2">
+                  <div className="mt-4 flex items-center justify-between gap-3 border-t border-bakery-border pt-3">
                     <div className="price-box flex items-baseline gap-2">
-                      <span className="num font-display text-lg font-bold text-bakery-ink">
+                      <span className="num font-display text-lg font-extrabold text-bakery-ink">
                         {dish.price.toFixed(2)} BYN
                       </span>
-                      <span className="num text-xs text-bakery-textMuted">{dish.weight}</span>
+                      <span className="num text-xs font-medium text-bakery-textMuted">
+                        {dish.weight}
+                      </span>
                     </div>
 
                     {qty === 0 ? (
@@ -174,13 +171,13 @@ export function MenuSection({
                         transition={SPRING_SNAPPY}
                         onClick={() => onAddItem(dish.id)}
                         aria-label={`Добавить ${dish.name} в корзину`}
-                        className="item-btn inline-flex h-[34px] items-center justify-center rounded-md bg-bakery-red px-3.5 text-xs font-semibold text-white transition-colors hover:bg-bakery-redHover"
+                        className="item-btn inline-flex h-9 items-center justify-center rounded-xl bg-bakery-charcoal px-4 text-xs font-semibold text-white transition-colors hover:bg-bakery-charcoalHover"
                       >
                         В корзину
                       </motion.button>
                     ) : (
                       <div
-                        className="stepper inline-flex h-[34px] items-center gap-1 rounded-md border border-bakery-border bg-bakery-subtle p-0.5"
+                        className="stepper inline-flex h-9 items-center gap-1.5"
                         role="group"
                         aria-label={`Количество для ${dish.name}`}
                       >
@@ -191,12 +188,12 @@ export function MenuSection({
                           data-action="decrease"
                           onClick={() => onUpdateQty(dish.id, -1)}
                           aria-label={`Уменьшить ${dish.name}`}
-                          className="stepper-btn relative flex h-7 w-7 items-center justify-center rounded bg-bakery-surface text-base font-bold text-bakery-ink transition-colors hover:bg-bakery-red hover:text-white"
+                          className="stepper-btn flex h-8 w-8 items-center justify-center rounded-lg bg-bakery-subtle text-base font-bold text-bakery-ink transition-colors hover:bg-bakery-charcoal hover:text-white"
                         >
                           -
                         </motion.button>
                         <span
-                          className="stepper-count num min-w-[22px] text-center font-display text-xs font-bold text-bakery-ink"
+                          className="stepper-count num min-w-[22px] text-center font-display text-sm font-bold text-bakery-ink"
                           aria-live="polite"
                         >
                           {qty}
@@ -208,7 +205,7 @@ export function MenuSection({
                           data-action="increase"
                           onClick={() => onUpdateQty(dish.id, 1)}
                           aria-label={`Увеличить ${dish.name}`}
-                          className="stepper-btn relative flex h-7 w-7 items-center justify-center rounded bg-bakery-surface text-base font-bold text-bakery-ink transition-colors hover:bg-bakery-red hover:text-white"
+                          className="stepper-btn flex h-8 w-8 items-center justify-center rounded-lg bg-bakery-subtle text-base font-bold text-bakery-ink transition-colors hover:bg-bakery-charcoal hover:text-white"
                         >
                           +
                         </motion.button>

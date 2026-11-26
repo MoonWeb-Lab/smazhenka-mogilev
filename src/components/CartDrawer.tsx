@@ -95,13 +95,16 @@ export function CartDrawer({
                 transition={SPRING_SNAPPY}
                 onClick={handleClose}
                 aria-label="Закрыть корзину"
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-bakery-border bg-bakery-surface text-bakery-ink hover:bg-bakery-subtle"
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-bakery-subtle text-bakery-ink transition-colors hover:bg-bakery-muted"
               >
                 <X className="h-4 w-4" aria-hidden="true" />
               </motion.button>
             </div>
 
-            <div className="flex flex-col gap-1.5 border-b border-bakery-border bg-bakery-subtle px-4 py-3" aria-live="polite">
+            <div
+              className="flex flex-col gap-1.5 border-b border-bakery-border bg-bakery-page px-4 py-3"
+              aria-live="polite"
+            >
               <div
                 id="cart-progress-status"
                 className={`text-xs font-semibold ${
@@ -116,7 +119,7 @@ export function CartDrawer({
                 <div
                   id="cart-progress-bar"
                   className={`h-full origin-left rounded-full transition-transform duration-200 ease-out ${
-                    remainingForMin <= 0 ? 'bg-bakery-success' : 'bg-bakery-gold'
+                    remainingForMin <= 0 ? 'bg-bakery-success' : 'bg-bakery-amber'
                   }`}
                   style={{ transform: `scaleX(${minProgress})` }}
                 />
@@ -132,7 +135,9 @@ export function CartDrawer({
               {cartEntries.length === 0 ? (
                 <div className="my-auto flex flex-col items-center gap-1 px-4 py-9 text-center">
                   <p className="font-display text-lg font-bold text-bakery-ink">В корзине пока пусто</p>
-                  <p className="text-sm text-bakery-textMuted">Выберите смаженки или напитки в меню</p>
+                  <p className="text-sm text-bakery-textMuted">
+                    Выберите смаженки или напитки в меню
+                  </p>
                 </div>
               ) : (
                 <AnimatePresence initial={false}>
@@ -157,7 +162,7 @@ export function CartDrawer({
                       </div>
 
                       <div
-                        className="inline-flex h-8 items-center gap-1 rounded-md border border-bakery-border bg-bakery-subtle p-0.5"
+                        className="inline-flex h-8 items-center gap-1"
                         role="group"
                         aria-label={`Количество для ${dish.name}`}
                       >
@@ -168,7 +173,7 @@ export function CartDrawer({
                             onUpdateQty(dish.id, -1);
                           }}
                           aria-label={`Уменьшить ${dish.name}`}
-                          className="flex h-6 w-6 items-center justify-center rounded bg-bakery-surface text-sm font-bold text-bakery-ink hover:bg-bakery-red hover:text-white"
+                          className="flex h-7 w-7 items-center justify-center rounded-md bg-bakery-subtle text-sm font-bold text-bakery-ink transition-colors hover:bg-bakery-charcoal hover:text-white"
                         >
                           -
                         </button>
@@ -182,7 +187,7 @@ export function CartDrawer({
                             onUpdateQty(dish.id, 1);
                           }}
                           aria-label={`Увеличить ${dish.name}`}
-                          className="flex h-6 w-6 items-center justify-center rounded bg-bakery-surface text-sm font-bold text-bakery-ink hover:bg-bakery-red hover:text-white"
+                          className="flex h-7 w-7 items-center justify-center rounded-md bg-bakery-subtle text-sm font-bold text-bakery-ink transition-colors hover:bg-bakery-charcoal hover:text-white"
                         >
                           +
                         </button>
@@ -224,7 +229,10 @@ export function CartDrawer({
                 </div>
                 <div className="flex items-center justify-between border-t border-bakery-border pt-2 font-bold text-bakery-ink">
                   <span>Итого к оплате:</span>
-                  <span id="cart-total-val" className="num font-display text-xl font-extrabold text-bakery-red">
+                  <span
+                    id="cart-total-val"
+                    className="num font-display text-xl font-extrabold text-bakery-ink"
+                  >
                     {orderTotal.toFixed(2)} BYN
                   </span>
                 </div>
@@ -233,7 +241,7 @@ export function CartDrawer({
               {successMessage ? (
                 <div
                   id="order-success-message"
-                  className="flex flex-col gap-2 rounded-[10px] border border-bakery-success bg-bakery-surface p-4"
+                  className="flex flex-col gap-2 border-l-4 border-bakery-success pl-4"
                 >
                   <div className="success-title font-display text-lg font-bold text-bakery-success">
                     Заявка отправлена в Telegram пекарни
@@ -246,13 +254,13 @@ export function CartDrawer({
                       type="button"
                       id="order-new-btn"
                       onClick={() => setSuccessMessage('')}
-                      className="rounded-md border border-bakery-border bg-bakery-surface px-3.5 py-2 text-xs font-semibold text-bakery-ink hover:bg-bakery-subtle"
+                      className="rounded-lg border border-bakery-border bg-bakery-surface px-3.5 py-2 text-xs font-semibold text-bakery-ink hover:bg-bakery-subtle"
                     >
                       Оформить новый заказ
                     </button>
                     <a
                       href={BAKERY_PHONE_HREF}
-                      className="rounded-md bg-bakery-red px-3.5 py-2 text-xs font-semibold text-white hover:bg-bakery-redHover"
+                      className="rounded-lg bg-bakery-charcoal px-3.5 py-2 text-xs font-semibold text-white hover:bg-bakery-charcoalHover"
                     >
                       Позвонить в пекарню
                     </a>

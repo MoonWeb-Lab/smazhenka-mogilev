@@ -32,13 +32,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="rounded-md bg-bakery-red px-4 py-2 text-sm font-semibold text-white"
+              className="rounded-xl bg-bakery-charcoal px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-bakery-charcoalHover"
             >
               Обновить страницу
             </button>
             <a
               href={BAKERY_PHONE_HREF}
-              className="rounded-md border border-bakery-border bg-bakery-surface px-4 py-2 text-sm font-semibold text-bakery-ink"
+              className="rounded-xl border border-bakery-border bg-bakery-surface px-4 py-2 text-sm font-semibold text-bakery-ink"
             >
               {BAKERY_PHONE_DISPLAY}
             </a>

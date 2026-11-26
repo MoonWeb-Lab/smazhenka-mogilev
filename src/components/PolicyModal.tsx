@@ -39,7 +39,7 @@ export function PolicyModal({ isOpen, onClose }: PolicyModalProps) {
               initial={{ opacity: 0, scale: 0.96, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0, transition: SPRING_MODAL }}
               exit={{ opacity: 0, scale: 0.97, y: 8, transition: { duration: 0.15, ease: EMIL_EASE_OUT } }}
-              className="pointer-events-auto flex max-h-[calc(100vh-48px)] w-full max-w-[520px] flex-col overflow-hidden rounded-[14px] border border-bakery-border bg-bakery-surface shadow-2xl"
+              className="pointer-events-auto flex max-h-[calc(100vh-48px)] w-full max-w-[520px] flex-col overflow-hidden rounded-2xl bg-bakery-surface shadow-2xl"
             >
               <div className="flex items-center justify-between gap-3 border-b border-bakery-border p-4">
                 <h3 id="policy-modal-title" className="font-display text-lg font-bold text-bakery-ink">
@@ -52,7 +52,7 @@ export function PolicyModal({ isOpen, onClose }: PolicyModalProps) {
                   transition={SPRING_SNAPPY}
                   onClick={onClose}
                   aria-label="Закрыть окно политики"
-                  className="flex h-8 w-8 items-center justify-center rounded-md border border-bakery-border bg-bakery-surface text-bakery-ink hover:bg-bakery-subtle"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-bakery-subtle text-bakery-ink hover:bg-bakery-muted"
                 >
                   <X className="h-4 w-4" aria-hidden="true" />
                 </motion.button>
@@ -60,19 +60,19 @@ export function PolicyModal({ isOpen, onClose }: PolicyModalProps) {
 
               <div className="flex flex-col gap-3 overflow-y-auto overscroll-contain p-4 text-sm leading-relaxed text-bakery-secondary">
                 <p>
-                  Пекарня «Смаженка» (г. Могилёв) использует данные только для оформления и доставки заказа.
+                  Пекарня «Смаженка Могилёв» использует ваши контакты только для приготовления и передачи заказа.
                 </p>
                 <p>
-                  <strong>1. Цели обработки:</strong> Имя, телефон, адрес и комментарий к заказу нужны только для приготовления блюд, подтверждения по телефону и доставки.
+                  <strong>1. Зачем нужны данные:</strong> имя, телефон, адрес и комментарий помогают испечь заказ ко времени, уточнить детали и доставить выпечку горячей.
                 </p>
                 <p>
-                  <strong>2. Конфиденциальность:</strong> Мы не передаём контакты рекламным агентствам или сторонним базам. Адрес и телефон передаются только курьеру для вручения заказа.
+                  <strong>2. Передача третьим лицам:</strong> мы не рассылаем спам и не передаём контакты посторонним. Телефон и адрес видит только пекарь и курьер на смене.
                 </p>
                 <p>
-                  <strong>3. Срок хранения:</strong> Данные хранятся только до завершения заказа и закрытия смены.
+                  <strong>3. Хранение:</strong> данные заявки используются только пока заказ готовится и едет к вам.
                 </p>
                 <p>
-                  <strong>4. Связь:</strong> По любым вопросам звоните в пекарню: +375 (29) 700-70-79.
+                  <strong>4. Вопросы:</strong> звоните в пекарню по номеру +375 (29) 700-70-79.
                 </p>
               </div>
 
@@ -81,7 +81,7 @@ export function PolicyModal({ isOpen, onClose }: PolicyModalProps) {
                   type="button"
                   id="confirm-policy-btn"
                   onClick={onClose}
-                  className="rounded-md border border-bakery-border bg-bakery-surface px-4 py-2 text-xs font-semibold text-bakery-ink hover:bg-bakery-subtle"
+                  className="rounded-xl bg-bakery-charcoal px-4 py-2 text-xs font-semibold text-white hover:bg-bakery-charcoalHover"
                 >
                   Понятно
                 </button>
