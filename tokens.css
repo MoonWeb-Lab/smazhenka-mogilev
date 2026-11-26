@@ -1,5 +1,7 @@
 :root {
-  color-scheme: dark;
+  color-scheme: light;
+
+  /* Spacing scale */
   --space-3xs: 2px;
   --space-2xs: 4px;
   --space-xs: 8px;
@@ -9,96 +11,84 @@
   --space-xl: 36px;
   --space-2xl: 56px;
   --space-3xl: 80px;
-  --space-4xl: 120px;
 
+  /* Typography scale */
   --text-xs: 0.8125rem;
   --text-sm: 0.875rem;
   --text-md: 1rem;
   --text-lg: 1.125rem;
   --text-xl: 1.375rem;
-  --text-2xl: 1.875rem;
-  --text-3xl: 2.375rem;
+  --text-2xl: 1.75rem;
+  --text-display-s: clamp(1.9rem, 5vw + 0.4rem, 2.75rem);
+  --text-display: clamp(2.25rem, 4.2vw + 0.6rem, 3.75rem);
+  --text-section: clamp(1.6rem, 2.2vw + 0.7rem, 2.35rem);
+  --text-title: clamp(1.0625rem, 0.4vw + 0.9rem, 1.2rem);
+  --text-lead: clamp(1.05rem, 0.3vw + 0.95rem, 1.2rem);
 
-  --text-display-s: clamp(1.85rem, 5vw + 0.5rem, 2.75rem);
-  --text-display: clamp(2.25rem, 4vw + 0.75rem, 3.65rem);
-  --text-section: clamp(1.65rem, 2.4vw + 0.75rem, 2.5rem);
-  --text-title: clamp(1.0625rem, 0.6vw + 0.85rem, 1.3rem);
-  --text-lead: clamp(1rem, 0.35vw + 0.92rem, 1.1875rem);
-
+  /* Emil Kowalski custom easings */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
-
   --dur-micro: 140ms;
   --dur-short: 220ms;
-  --dur-long: 320ms;
+  --dur-reveal: 420ms;
 
-  --container: 1220px;
+  /* Layout */
+  --container: 1160px;
   --gutter: 24px;
-  --gap-columns: 20px;
-  --section-gap-s: 48px;
   --section-gap: 72px;
-  --section-gap-l: 96px;
 
+  /* Z-index */
   --z-base: 1;
   --z-raised: 10;
-  --z-dropdown: 100;
   --z-sticky: 200;
   --z-sticky-nav: 300;
   --z-modal: 400;
   --z-toast: 500;
-  --z-tooltip: 600;
 
-  /* Dark Hearth & Golden Crust Brand Palette */
-  --color-paper: #0e0e11;
-  --color-paper-2: #1c1c23;
-  --color-paper-3: #262630;
-  --color-surface: #15151a;
-  --color-ink: #faf7f0;
-  --color-ink-2: #d6d2c9;
-  --color-muted: #a19b90;
-  --color-disabled-ink: #76726b;
-  --color-disabled-bg: #1e1e25;
-  --color-rule: rgba(255, 248, 230, 0.1);
-  --color-rule-dark: rgba(255, 248, 230, 0.24);
+  /* Street-food & Craft Bakery Light System */
+  --bg-page: #fffdf8;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f5f2eb;
+  --bg-muted: #ebe6dc;
 
-  /* Brand Golden Yellow + Ember */
-  --color-accent: #f5b700;
-  --color-accent-hover: #ffca2c;
-  --color-accent-subtle: rgba(245, 183, 0, 0.12);
-  --color-accent-ink: #12100a;
-  --color-ember: #ea580c;
-  --color-focus: #f5b700;
-  --color-badge-bg: rgba(245, 183, 0, 0.14);
-  --color-badge-ink: #ffd44d;
+  --text-primary: #141414;
+  --text-secondary: #3f3d39;
+  --text-muted: #666159;
+  --text-disabled: #918c84;
 
-  --color-error: #f87171;
-  --color-success: #34d399;
+  --border: #e5e2dc;
+  --border-strong: #cfc9be;
 
-  --font-display: "Unbounded", system-ui, -apple-system, sans-serif;
-  --font-body: "Manrope", system-ui, -apple-system, sans-serif;
+  /* Accents: Tomato Red + Mustard Gold */
+  --accent-red: #d9381e;
+  --accent-red-hover: #b82b14;
+  --accent-red-soft: #fdebe7;
+  --accent-red-ink: #ffffff;
 
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-card: 18px;
+  --accent-gold: #e59a1c;
+  --accent-gold-soft: #fef3dc;
+  --accent-gold-ink: #7a4b00;
+
+  --color-success: #15803d;
+  --color-success-soft: #dcfce7;
+  --color-error: #c81e1e;
+
+  --font-display: "Rubik", system-ui, -apple-system, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Clean shadcn-style radii & shadows */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --radius-pill: 999px;
-  --rule-hair: 1px;
-  --rule-solid: 2px;
 
-  --shadow-btn-primary: 0 4px 20px rgba(245, 183, 0, 0.24);
-  --shadow-btn-primary-hover: 0 8px 26px rgba(245, 183, 0, 0.36);
-  --shadow-badge: 0 8px 20px rgba(0, 0, 0, 0.45);
-  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.28);
-  --shadow-card-hover: 0 14px 34px rgba(0, 0, 0, 0.44);
-  --shadow-tray: 0 -8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-drawer: -12px 0 40px rgba(0, 0, 0, 0.65);
-  --shadow-cookie: 0 12px 36px rgba(0, 0, 0, 0.6);
-  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.72);
+  --shadow-xs: 0 1px 2px rgba(20, 20, 20, 0.05);
+  --shadow-sm: 0 4px 12px -2px rgba(20, 20, 20, 0.06);
+  --shadow-md: 0 12px 28px -6px rgba(20, 20, 20, 0.1);
+  --shadow-drawer: -8px 0 32px rgba(20, 20, 20, 0.14);
+  --shadow-modal: 0 20px 50px -12px rgba(20, 20, 20, 0.22);
 
-  --color-backdrop: rgba(6, 6, 8, 0.74);
-  --color-progress-bg: #262630;
-  --color-progress-fill: #f5b700;
-  --color-progress-complete: #34d399;
-  --tracking-display: -0.025em;
+  --color-backdrop: rgba(20, 20, 20, 0.45);
+  --focus-ring: 0 0 0 2px var(--bg-page), 0 0 0 4px var(--accent-red);
 }

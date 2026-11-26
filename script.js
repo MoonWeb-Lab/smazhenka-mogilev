@@ -1,6 +1,5 @@
 /**
- * Смаженка Могилёв: Клиентский интерактив, корзина, доставка и калькулятор заказа
- * Чистый Vanilla JS без фреймворков
+ * Смаженка Могилёв: статус работы, фильтры меню, корзина и оформление заказа
  */
 
 document.documentElement.classList.add('js');
@@ -44,7 +43,7 @@ document.documentElement.classList.add('js');
         }
       }
     } catch (e) {
-      // localStorage недоступен или поврежден
+      // localStorage недоступен
     }
   }
 
@@ -60,10 +59,10 @@ document.documentElement.classList.add('js');
     }
   }
 
-  // 1. Инициализация таймера свежей партии и статуса работы печи
-  function initOvenStatus() {
+  // 1. Статус работы пекарен (без таймера обратного отсчёта)
+  function initOpenStatus() {
     const statusTextEl = document.getElementById('status-text');
-    const batchTimerEl = document.getElementById('batch-timer');
+    const statusDotEl = document.getElementById('status-dot');
 
     function updateStatus() {
       const now = new Date();
@@ -73,8 +72,6 @@ document.documentElement.classList.add('js');
       const day = mogilevTime.getDay();
       const isWeekend = day === 0 || day === 6;
       const hours = mogilevTime.getHours();
-      const minutes = mogilevTime.getMinutes();
-      const seconds = mogilevTime.getSeconds();
 
       const openHour = isWeekend ? 10 : 9;
       const closeHour = isWeekend ? 20 : 21;
@@ -82,34 +79,47 @@ document.documentElement.classList.add('js');
 
       if (statusTextEl) {
         statusTextEl.textContent = isOpen
-          ? `Печи горячие · открыто до ${closeHour}:00`
+          ? `Печи работают: открыто до ${closeHour}:00`
           : `Откроется в ${openHour}:00`;
       }
-
-      if (batchTimerEl) {
-        if (isOpen) {
-          const cycleMinutes = 15;
-          const minsInCycle = minutes % cycleMinutes;
-          const minsRemaining = cycleMinutes - 1 - minsInCycle;
-          const secsRemaining = 60 - seconds;
-
-          const formattedMins = String(minsRemaining).padStart(2, '0');
-          const formattedSecs = String(secsRemaining === 60 ? 0 : secsRemaining).padStart(2, '0');
-          batchTimerEl.textContent = `${formattedMins}:${formattedSecs}`;
-        } else {
-          batchTimerEl.textContent = `утром в ${openHour}:15`;
-        }
+      if (statusDotEl) {
+        statusDotEl.classList.toggle('is-closed', !isOpen);
       }
     }
 
     updateStatus();
-    setInterval(updateStatus, 1000);
+    setInterval(updateStatus, 60000);
   }
 
-  // 2. Интерактивная фильтрация категорий меню + липкая полоса
+  // 2. Плавное GPU-появление блоков при скролле
+  function initScrollReveal() {
+    const blocks = document.querySelectorAll('.reveal-block');
+    if (!blocks.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+      blocks.forEach((el) => el.classList.add('is-revealed'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -24px 0px' }
+    );
+
+    blocks.forEach((el) => observer.observe(el));
+  }
+
+  // 3. Фильтрация категорий меню
   function initMenuFilters() {
     const filterWrap = document.getElementById('menu-filter-sticky-wrap');
-    const filterChips = Array.from(document.querySelectorAll('.filter-chip'));
+    const tabs = Array.from(document.querySelectorAll('.menu-tab'));
     const menuCards = document.querySelectorAll('.menu-card');
 
     if (filterWrap) {
@@ -128,47 +138,47 @@ document.documentElement.classList.add('js');
       }
     }
 
-    if (!filterChips.length || !menuCards.length) return;
+    if (!tabs.length || !menuCards.length) return;
 
-    function activateChip(chip) {
-      const selectedCategory = chip.getAttribute('data-category');
+    function activateTab(tab) {
+      const selectedCategory = tab.getAttribute('data-category');
 
-      filterChips.forEach((c) => {
-        c.classList.remove('is-active');
-        c.setAttribute('aria-selected', 'false');
-        c.setAttribute('aria-pressed', 'false');
+      tabs.forEach((t) => {
+        t.classList.remove('is-active');
+        t.setAttribute('aria-selected', 'false');
+        t.setAttribute('aria-pressed', 'false');
       });
 
-      chip.classList.add('is-active');
-      chip.setAttribute('aria-selected', 'true');
-      chip.setAttribute('aria-pressed', 'true');
+      tab.classList.add('is-active');
+      tab.setAttribute('aria-selected', 'true');
+      tab.setAttribute('aria-pressed', 'true');
 
       menuCards.forEach((card) => {
         const cardCategory = card.getAttribute('data-category');
         const isMatch = selectedCategory === 'all' || cardCategory === selectedCategory;
         if (isMatch) {
           card.removeAttribute('hidden');
+          card.classList.add('is-revealed');
         } else {
           card.setAttribute('hidden', '');
         }
       });
     }
 
-    filterChips.forEach((chip, index) => {
-      chip.addEventListener('click', () => activateChip(chip));
-      chip.addEventListener('keydown', (e) => {
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activateTab(tab));
+      tab.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
           e.preventDefault();
           const dir = e.key === 'ArrowRight' ? 1 : -1;
-          const nextChip = filterChips[(index + dir + filterChips.length) % filterChips.length];
-          nextChip.focus();
-          activateChip(nextChip);
+          const nextTab = tabs[(index + dir + tabs.length) % tabs.length];
+          nextTab.focus();
+          activateTab(nextTab);
         }
       });
     });
   }
 
-  // Безопасное создание степпера количества без innerHTML
   function createStepperElement(itemName, qty) {
     const stepper = document.createElement('div');
     stepper.className = 'stepper';
@@ -180,7 +190,7 @@ document.documentElement.classList.add('js');
     decBtn.className = 'stepper-btn';
     decBtn.setAttribute('data-action', 'decrease');
     decBtn.setAttribute('aria-label', `Уменьшить ${itemName}`);
-    decBtn.textContent = '−';
+    decBtn.textContent = '-';
 
     const countSpan = document.createElement('span');
     countSpan.className = 'stepper-count';
@@ -198,7 +208,7 @@ document.documentElement.classList.add('js');
     return stepper;
   }
 
-  // 3. Корзина, калькулятор и заказ с доставкой / самовывозом
+  // 4. Корзина, расчёт заказа и отправка заявки
   function initCartAndOrder() {
     const menuGrid = document.querySelector('.menu-grid');
     const orderTray = document.querySelector('.order-tray');
@@ -488,7 +498,7 @@ document.documentElement.classList.add('js');
           checkoutSubmitBtn.removeAttribute('aria-disabled');
         }
         if (checkoutBtnText) {
-          checkoutBtnText.textContent = `Оформить заказ на ${orderTotal.toFixed(2)} BYN`;
+          checkoutBtnText.textContent = `Отправить заказ на ${orderTotal.toFixed(2)} BYN`;
         }
       }
 
@@ -514,7 +524,7 @@ document.documentElement.classList.add('js');
 
         const emptySub = document.createElement('p');
         emptySub.className = 'cart-empty-sub';
-        emptySub.textContent = 'Выберите горячие смаженки или напитки в меню';
+        emptySub.textContent = 'Выберите смаженки или напитки в меню';
 
         emptyBox.append(emptyTitle, emptySub);
         cartItemsList.appendChild(emptyBox);
@@ -563,10 +573,10 @@ document.documentElement.classList.add('js');
         if (cart.items[id] && cart.items[id].qty > 0) {
           if (addBtn) addBtn.style.display = 'none';
           if (!stepper) {
-            const bottomBox = card.querySelector('.menu-card-bottom');
-            if (bottomBox) {
+            const footBox = card.querySelector('.menu-card-foot');
+            if (footBox) {
               stepper = createStepperElement(cart.items[id].name, cart.items[id].qty);
-              bottomBox.appendChild(stepper);
+              footBox.appendChild(stepper);
             }
           } else {
             stepper.style.display = 'inline-flex';
@@ -690,7 +700,7 @@ document.documentElement.classList.add('js');
 
         if (orderSuccessText) {
           if (deliveryMethod === 'delivery') {
-            orderSuccessText.textContent = `Курьер привезёт заказ по адресу: ${orderStreet.value.trim()}. Если нужно уточнить детали по телефону, звоните +375 (29) 700-70-79.`;
+            orderSuccessText.textContent = `Курьер привезёт заказ по адресу: ${orderStreet.value.trim()}. Если нужно уточнить детали, звоните +375 (29) 700-70-79.`;
           } else {
             const spotText = orderSpot ? orderSpot.options[orderSpot.selectedIndex].text : 'выбранной точке';
             orderSuccessText.textContent = `Готовим к вашему времени на точке: ${spotText}. Ждём вас в пекарне.`;
@@ -708,11 +718,10 @@ document.documentElement.classList.add('js');
       });
     }
 
-    // Инициализация UI с учетом сохраненного состояния
     setDeliveryMethod(deliveryMethod);
   }
 
-  // 4. Модальное окно политики обработки персональных данных
+  // 5. Модальное окно политики обработки персональных данных
   function initPolicyModal() {
     const openBtn = document.getElementById('open-policy-btn');
     const closeBtn = document.getElementById('close-policy-btn');
@@ -757,7 +766,7 @@ document.documentElement.classList.add('js');
     if (backdrop) backdrop.addEventListener('click', closeModal);
   }
 
-  // 5. Уведомление об использовании файлов cookie и localStorage
+  // 6. Уведомление об использовании файлов cookie
   function initCookieNotice() {
     const banner = document.getElementById('cookie-banner');
     const acceptBtn = document.getElementById('accept-cookies-btn');
@@ -775,7 +784,7 @@ document.documentElement.classList.add('js');
     if (!isAccepted) {
       setTimeout(() => {
         banner.classList.add('is-visible');
-      }, 1000);
+      }, 900);
     }
 
     acceptBtn.addEventListener('click', () => {
@@ -788,7 +797,7 @@ document.documentElement.classList.add('js');
     });
   }
 
-  // 6. Плавный скролл к якорям с учетом липкого заголовка
+  // 7. Плавный скролл к якорям
   function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
       anchor.addEventListener('click', function(e) {
@@ -811,7 +820,8 @@ document.documentElement.classList.add('js');
 
   function bootstrap() {
     loadSavedState();
-    initOvenStatus();
+    initOpenStatus();
+    initScrollReveal();
     initMenuFilters();
     initCartAndOrder();
     initPolicyModal();
