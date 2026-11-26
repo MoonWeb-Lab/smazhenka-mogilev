@@ -29,6 +29,10 @@ export default {
         display: ['Rubik', 'system-ui', '-apple-system', 'sans-serif'],
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
+      boxShadow: {
+        xs: '0 1px 2px rgba(20, 20, 20, 0.05)',
+        sm: '0 4px 12px -2px rgba(20, 20, 20, 0.06)',
+      },
     },
   },
   plugins: [],

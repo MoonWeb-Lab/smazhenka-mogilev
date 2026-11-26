@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { EMIL_EASE_OUT, SPRING_MODAL, SPRING_SNAPPY } from '../lib/motion';
 
 interface PolicyModalProps {
@@ -9,22 +10,9 @@ interface PolicyModalProps {
 }
 
 export function PolicyModal({ isOpen, onClose }: PolicyModalProps) {
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    document.addEventListener('keydown', onKeyDown);
-    const t = window.setTimeout(() => closeBtnRef.current?.focus(), 40);
-    return () => {
-      window.clearTimeout(t);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [isOpen, onClose]);
+  useFocusTrap(isOpen, modalRef, onClose, false, false);
 
   return (
     <AnimatePresence>
@@ -43,6 +31,7 @@ export function PolicyModal({ isOpen, onClose }: PolicyModalProps) {
 
           <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
+              ref={modalRef}
               id="policy-modal"
               role="dialog"
               aria-modal="true"
@@ -57,7 +46,6 @@ export function PolicyModal({ isOpen, onClose }: PolicyModalProps) {
                   Персональные данные
                 </h3>
                 <motion.button
-                  ref={closeBtnRef}
                   type="button"
                   id="close-policy-btn"
                   whileTap={{ scale: 0.92 }}

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { EMIL_EASE_OUT, SPRING_MODAL, SPRING_SNAPPY } from '../lib/motion';
 import type { DishItem } from '../types/menu';
 
@@ -13,35 +14,13 @@ interface DishModalProps {
 
 export function DishModal({ dish, onClose, onAddToCart, isCartOpen }: DishModalProps) {
   const [qty, setQty] = useState(1);
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (dish) {
-      setQty(1);
-    }
+    if (dish) setQty(1);
   }, [dish]);
 
-  useEffect(() => {
-    if (!dish) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    document.addEventListener('keydown', onKeyDown);
-    const timer = window.setTimeout(() => closeBtnRef.current?.focus(), 40);
-
-    return () => {
-      window.clearTimeout(timer);
-      document.removeEventListener('keydown', onKeyDown);
-      if (!isCartOpen) {
-        document.body.style.overflow = prevOverflow;
-      }
-    };
-  }, [dish, onClose, isCartOpen]);
+  useFocusTrap(Boolean(dish), modalRef, onClose, false, !isCartOpen);
 
   const nutritionRows = dish
     ? [
@@ -85,6 +64,7 @@ export function DishModal({ dish, onClose, onAddToCart, isCartOpen }: DishModalP
 
           <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
             <motion.div
+              ref={modalRef}
               id="dish-modal"
               role="dialog"
               aria-modal="true"
@@ -95,7 +75,6 @@ export function DishModal({ dish, onClose, onAddToCart, isCartOpen }: DishModalP
               className="pointer-events-auto relative flex max-h-[calc(100vh-24px)] w-full max-w-[540px] flex-col overflow-hidden rounded-[14px] border border-bakery-border bg-bakery-surface shadow-2xl"
             >
               <motion.button
-                ref={closeBtnRef}
                 type="button"
                 id="close-dish-btn"
                 whileTap={{ scale: 0.92 }}

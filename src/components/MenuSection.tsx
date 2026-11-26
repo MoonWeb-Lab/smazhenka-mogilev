@@ -1,7 +1,7 @@
 import { useState, type KeyboardEvent } from 'react';
 import { LayoutGroup, motion } from 'framer-motion';
 import { CATEGORY_TABS, DISHES } from '../data/menuData';
-import { CARD_VIEWPORT, EMIL_EASE_OUT, SPRING_SNAPPY } from '../lib/motion';
+import { EMIL_EASE_OUT, SPRING_SNAPPY } from '../lib/motion';
 import type { DishCategory, DishItem } from '../types/menu';
 
 interface MenuSectionProps {
@@ -106,12 +106,11 @@ export function MenuSection({
                 data-id={dish.id}
                 data-category={dish.category}
                 data-price={dish.price.toFixed(2)}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={CARD_VIEWPORT}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  duration: 0.35,
-                  delay: Math.min(idx * 0.03, 0.18),
+                  duration: 0.28,
+                  delay: Math.min(idx * 0.025, 0.15),
                   ease: EMIL_EASE_OUT,
                 }}
                 whileHover={{ y: -2 }}
