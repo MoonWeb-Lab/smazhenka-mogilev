@@ -24,6 +24,10 @@
   html,
   body {
     overflow-x: clip;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    caret-color: transparent;
   }
 
   body {
@@ -33,6 +37,30 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
+  }
+
+  *:not(input):not(textarea) {
+    caret-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  a,
+  button,
+  [role='button'],
+  [role='tab'],
+  select,
+  summary,
+  label[for],
+  input[type='checkbox'] {
+    cursor: pointer;
+  }
+
+  input:not([type='checkbox']):not([type='radio']),
+  textarea {
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
     caret-color: var(--bakery-accent);
   }
 

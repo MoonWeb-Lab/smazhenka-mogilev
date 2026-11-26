@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { BAKERY_PHONE_DISPLAY, BAKERY_PHONE_HREF } from '../data/menuData';
 import { EMIL_EASE_OUT, HERO_ITEM, HERO_STAGGER, SPRING_SNAPPY } from '../lib/motion';
@@ -17,6 +17,25 @@ export function Hero() {
   });
   const imageY = useTransform(scrollYProgress, [0, 1], [0, -24]);
   const imageScale = useTransform(scrollYProgress, [0, 1], [1.03, 1.09]);
+
+  const rawRotateX = useMotionValue(0);
+  const rawRotateY = useMotionValue(0);
+  const rotateX = useSpring(rawRotateX, { stiffness: 180, damping: 24 });
+  const rotateY = useSpring(rawRotateY, { stiffness: 180, damping: 24 });
+
+  const handlePhotoMove = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse') return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    rawRotateY.set(px * 5);
+    rawRotateX.set(-py * 5);
+  };
+
+  const handlePhotoLeave = () => {
+    rawRotateX.set(0);
+    rawRotateY.set(0);
+  };
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -150,23 +169,31 @@ export function Hero() {
             </motion.div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 18, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: EMIL_EASE_OUT }}
-            className="w-full overflow-hidden rounded-2xl bg-bakery-subtle"
+          <div
+            onPointerMove={handlePhotoMove}
+            onPointerLeave={handlePhotoLeave}
+            style={{ perspective: 1000 }}
+            className="w-full"
           >
-            <motion.img
-              style={{ y: imageY, scale: imageScale, objectPosition: '50% 45%' }}
-              src={HERO_IMAGE}
-              width={1280}
-              height={853}
-              fetchPriority="high"
-              decoding="async"
-              alt="Выпекание горячих смаженок в каменной печи пекарни в Могилёве"
-              className="aspect-[4/3] w-full object-cover will-change-transform lg:aspect-[5/4]"
-            />
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 18, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.1, ease: EMIL_EASE_OUT }}
+              style={{ rotateX, rotateY }}
+              className="w-full overflow-hidden rounded-2xl bg-bakery-subtle will-change-transform"
+            >
+              <motion.img
+                style={{ y: imageY, scale: imageScale, objectPosition: '50% 45%' }}
+                src={HERO_IMAGE}
+                width={1280}
+                height={853}
+                fetchPriority="high"
+                decoding="async"
+                alt="Выпекание горячих смаженок в каменной печи пекарни в Могилёве"
+                className="aspect-[4/3] w-full object-cover will-change-transform lg:aspect-[5/4]"
+              />
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

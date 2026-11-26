@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MotionConfig } from 'framer-motion';
+import { BakeryMarquee } from './components/BakeryMarquee';
 import { CartDrawer } from './components/CartDrawer';
+import { CartToast } from './components/CartToast';
 import { CookieBanner } from './components/CookieBanner';
 import { CraftSection } from './components/CraftSection';
 import { DishModal } from './components/DishModal';
@@ -12,6 +14,7 @@ import { LocationsSection } from './components/LocationsSection';
 import { MenuSection } from './components/MenuSection';
 import { OrderTray } from './components/OrderTray';
 import { PolicyModal } from './components/PolicyModal';
+import { DISHES } from './data/menuData';
 import { useCart } from './hooks/useCart';
 import type { DishItem } from './types/menu';
 
@@ -37,16 +40,42 @@ export function App() {
   const [selectedDish, setSelectedDish] = useState<DishItem | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isPolicyOpen, setIsPolicyOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
+
+  const showAddToast = useCallback((dishId: string, qtyAdded: number) => {
+    const dish = DISHES.find((d) => d.id === dishId);
+    if (!dish) return;
+    setToastMessage(`В корзине: ${dish.name} (+${qtyAdded})`);
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = window.setTimeout(() => setToastMessage(null), 2200);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
+  const handleAddWithToast = useCallback(
+    (dishId: string, qty = 1) => {
+      addItem(dishId, qty);
+      showAddToast(dishId, qty);
+    },
+    [addItem, showAddToast]
+  );
 
   return (
     <MotionConfig reducedMotion="user">
       <Header totalCount={totalCount} onOpenCart={() => setIsCartOpen(true)} />
+      <CartToast message={toastMessage} />
 
       <main id="main-content">
         <Hero />
+        <BakeryMarquee />
         <MenuSection
           quantities={quantities}
-          onAddItem={(id) => addItem(id, 1)}
+          onAddItem={(id) => handleAddWithToast(id, 1)}
           onUpdateQty={updateItemQty}
           onSelectDish={setSelectedDish}
         />
@@ -67,7 +96,7 @@ export function App() {
       <DishModal
         dish={selectedDish}
         onClose={() => setSelectedDish(null)}
-        onAddToCart={addItem}
+        onAddToCart={handleAddWithToast}
         isCartOpen={isCartOpen}
       />
 
