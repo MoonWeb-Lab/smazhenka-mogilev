@@ -8,14 +8,11 @@ document.documentElement.classList.add('js');
 (function() {
   'use strict';
 
-  // Минимальная сумма заказа для оформления
   const MIN_ORDER_AMOUNT = 20.00;
-  // Стоимость доставки курьером
   const DELIVERY_FEE = 4.00;
-  // Порог бесплатной доставки
   const FREE_DELIVERY_THRESHOLD = 40.00;
+  const STATE_STORAGE_KEY = 'smazhenka_state_v1';
 
-  // Состояние корзины
   const cart = {
     items: {},
     totalCount: 0,
@@ -23,8 +20,45 @@ document.documentElement.classList.add('js');
     totalPrice: 0
   };
 
-  // Способ получения заказа: 'pickup' (самовывоз) или 'delivery' (доставка курьером)
   let deliveryMethod = 'pickup';
+  let selectedSpot = 'chel';
+
+  function loadSavedState() {
+    try {
+      const raw = localStorage.getItem(STATE_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        if (parsed.items && typeof parsed.items === 'object') {
+          for (const [id, item] of Object.entries(parsed.items)) {
+            if (item && Number.isInteger(item.qty) && item.qty > 0 && typeof item.price === 'number' && typeof item.name === 'string') {
+              cart.items[id] = { qty: item.qty, price: item.price, name: item.name };
+            }
+          }
+        }
+        if (parsed.deliveryMethod === 'delivery' || parsed.deliveryMethod === 'pickup') {
+          deliveryMethod = parsed.deliveryMethod;
+        }
+        if (parsed.selectedSpot === 'chel' || parsed.selectedSpot === 'stroit') {
+          selectedSpot = parsed.selectedSpot;
+        }
+      }
+    } catch (e) {
+      // localStorage недоступен или поврежден
+    }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STATE_STORAGE_KEY, JSON.stringify({
+        items: cart.items,
+        deliveryMethod,
+        selectedSpot
+      }));
+    } catch (e) {
+      // localStorage недоступен
+    }
+  }
 
   // 1. Инициализация таймера свежей партии и статуса работы печи
   function initOvenStatus() {
@@ -32,41 +66,35 @@ document.documentElement.classList.add('js');
     const batchTimerEl = document.getElementById('batch-timer');
 
     function updateStatus() {
-      // Время по Могилёву (UTC+3)
       const now = new Date();
       const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
       const mogilevTime = new Date(utc + (3600000 * 3));
-      
-      const day = mogilevTime.getDay(); // 0: вс, 6: сб
+
+      const day = mogilevTime.getDay();
       const isWeekend = day === 0 || day === 6;
       const hours = mogilevTime.getHours();
       const minutes = mogilevTime.getMinutes();
       const seconds = mogilevTime.getSeconds();
 
-      // Режим работы: будни 09:00 до 21:00, выходные 10:00 до 20:00
       const openHour = isWeekend ? 10 : 9;
       const closeHour = isWeekend ? 20 : 21;
       const isOpen = hours >= openHour && hours < closeHour;
 
       if (statusTextEl) {
-        if (isOpen) {
-          statusTextEl.textContent = `Печи горячие, открыто до ${closeHour}:00`;
-        } else {
-          statusTextEl.textContent = `Откроется в ${openHour}:00`;
-        }
+        statusTextEl.textContent = isOpen
+          ? `Печи горячие · открыто до ${closeHour}:00`
+          : `Откроется в ${openHour}:00`;
       }
 
       if (batchTimerEl) {
         if (isOpen) {
-          // 15-минутный цикл выпекания
           const cycleMinutes = 15;
           const minsInCycle = minutes % cycleMinutes;
           const minsRemaining = cycleMinutes - 1 - minsInCycle;
           const secsRemaining = 60 - seconds;
-          
+
           const formattedMins = String(minsRemaining).padStart(2, '0');
           const formattedSecs = String(secsRemaining === 60 ? 0 : secsRemaining).padStart(2, '0');
-
           batchTimerEl.textContent = `${formattedMins}:${formattedSecs}`;
         } else {
           batchTimerEl.textContent = `утром в ${openHour}:15`;
@@ -78,37 +106,96 @@ document.documentElement.classList.add('js');
     setInterval(updateStatus, 1000);
   }
 
-  // 2. Интерактивная фильтрация категорий меню
+  // 2. Интерактивная фильтрация категорий меню + липкая полоса
   function initMenuFilters() {
-    const filterChips = document.querySelectorAll('.filter-chip');
+    const filterWrap = document.getElementById('menu-filter-sticky-wrap');
+    const filterChips = Array.from(document.querySelectorAll('.filter-chip'));
     const menuCards = document.querySelectorAll('.menu-card');
+
+    if (filterWrap) {
+      const sentinel = document.createElement('div');
+      sentinel.setAttribute('aria-hidden', 'true');
+      filterWrap.parentNode.insertBefore(sentinel, filterWrap);
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            filterWrap.classList.toggle('is-stuck', !entry.isIntersecting);
+          },
+          { rootMargin: '-65px 0px 0px 0px', threshold: 0 }
+        );
+        observer.observe(sentinel);
+      }
+    }
 
     if (!filterChips.length || !menuCards.length) return;
 
-    filterChips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        const selectedCategory = chip.getAttribute('data-category');
+    function activateChip(chip) {
+      const selectedCategory = chip.getAttribute('data-category');
 
-        filterChips.forEach(c => {
-          c.classList.remove('is-active');
-          c.setAttribute('aria-pressed', 'false');
-        });
+      filterChips.forEach((c) => {
+        c.classList.remove('is-active');
+        c.setAttribute('aria-selected', 'false');
+        c.setAttribute('aria-pressed', 'false');
+      });
 
-        chip.classList.add('is-active');
-        chip.setAttribute('aria-pressed', 'true');
+      chip.classList.add('is-active');
+      chip.setAttribute('aria-selected', 'true');
+      chip.setAttribute('aria-pressed', 'true');
 
-        menuCards.forEach(card => {
-          const cardCategory = card.getAttribute('data-category');
-          const isMatch = selectedCategory === 'all' || cardCategory === selectedCategory;
+      menuCards.forEach((card) => {
+        const cardCategory = card.getAttribute('data-category');
+        const isMatch = selectedCategory === 'all' || cardCategory === selectedCategory;
+        if (isMatch) {
+          card.removeAttribute('hidden');
+        } else {
+          card.setAttribute('hidden', '');
+        }
+      });
+    }
 
-          if (isMatch) {
-            card.removeAttribute('hidden');
-          } else {
-            card.setAttribute('hidden', '');
-          }
-        });
+    filterChips.forEach((chip, index) => {
+      chip.addEventListener('click', () => activateChip(chip));
+      chip.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          const dir = e.key === 'ArrowRight' ? 1 : -1;
+          const nextChip = filterChips[(index + dir + filterChips.length) % filterChips.length];
+          nextChip.focus();
+          activateChip(nextChip);
+        }
       });
     });
+  }
+
+  // Безопасное создание степпера количества без innerHTML
+  function createStepperElement(itemName, qty) {
+    const stepper = document.createElement('div');
+    stepper.className = 'stepper';
+    stepper.setAttribute('role', 'group');
+    stepper.setAttribute('aria-label', `Количество для ${itemName}`);
+
+    const decBtn = document.createElement('button');
+    decBtn.type = 'button';
+    decBtn.className = 'stepper-btn';
+    decBtn.setAttribute('data-action', 'decrease');
+    decBtn.setAttribute('aria-label', `Уменьшить ${itemName}`);
+    decBtn.textContent = '−';
+
+    const countSpan = document.createElement('span');
+    countSpan.className = 'stepper-count';
+    countSpan.setAttribute('aria-live', 'polite');
+    countSpan.textContent = String(qty);
+
+    const incBtn = document.createElement('button');
+    incBtn.type = 'button';
+    incBtn.className = 'stepper-btn';
+    incBtn.setAttribute('data-action', 'increase');
+    incBtn.setAttribute('aria-label', `Увеличить ${itemName}`);
+    incBtn.textContent = '+';
+
+    stepper.append(decBtn, countSpan, incBtn);
+    return stepper;
   }
 
   // 3. Корзина, калькулятор и заказ с доставкой / самовывозом
@@ -138,24 +225,73 @@ document.documentElement.classList.add('js');
     const checkoutForm = document.getElementById('cart-checkout-form');
     const orderSuccessMsg = document.getElementById('order-success-message');
     const orderSuccessText = document.getElementById('order-success-text');
+    const orderNewBtn = document.getElementById('order-new-btn');
 
-    // Переключатель способа получения
     const methodPickupBtn = document.getElementById('method-pickup-btn');
     const methodDeliveryBtn = document.getElementById('method-delivery-btn');
     const pickupFields = document.getElementById('pickup-fields');
     const deliveryFields = document.getElementById('delivery-fields');
+    const orderSpot = document.getElementById('order-spot');
     const orderConsent = document.getElementById('order-consent');
     const orderStreet = document.getElementById('order-street');
+    const orderName = document.getElementById('order-name');
+    const orderPhone = document.getElementById('order-phone');
 
-    // Открытие и закрытие модальной корзины
+    const streetError = document.getElementById('street-error');
+    const nameError = document.getElementById('name-error');
+    const phoneError = document.getElementById('phone-error');
+
+    let lastFocusedBeforeCart = null;
+
+    if (orderSpot) {
+      orderSpot.value = selectedSpot;
+      orderSpot.addEventListener('change', () => {
+        selectedSpot = orderSpot.value;
+        saveState();
+      });
+    }
+
+    function setFieldError(inputEl, errorEl, message) {
+      if (inputEl) inputEl.classList.add('is-invalid');
+      if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.removeAttribute('hidden');
+      }
+    }
+
+    function clearFieldError(inputEl, errorEl) {
+      if (inputEl) inputEl.classList.remove('is-invalid');
+      if (errorEl) {
+        errorEl.textContent = '';
+        errorEl.setAttribute('hidden', '');
+      }
+    }
+
+    if (orderName) {
+      orderName.addEventListener('input', () => clearFieldError(orderName, nameError));
+    }
+    if (orderPhone) {
+      orderPhone.addEventListener('input', () => clearFieldError(orderPhone, phoneError));
+    }
+    if (orderStreet) {
+      orderStreet.addEventListener('input', () => clearFieldError(orderStreet, streetError));
+    }
+
+    function resetSuccessView() {
+      if (orderSuccessMsg) orderSuccessMsg.setAttribute('hidden', '');
+      if (checkoutForm) checkoutForm.style.display = 'flex';
+    }
+
     function openCart() {
       if (!cartDrawer || !cartBackdrop) return;
+      lastFocusedBeforeCart = document.activeElement;
       cartDrawer.classList.add('is-open');
       cartBackdrop.classList.add('is-open');
       cartDrawer.setAttribute('aria-hidden', 'false');
       cartBackdrop.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
       document.addEventListener('keydown', onKeyDown);
+      if (closeCartBtn) closeCartBtn.focus();
     }
 
     function closeCart() {
@@ -166,9 +302,17 @@ document.documentElement.classList.add('js');
       cartBackdrop.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
       document.removeEventListener('keydown', onKeyDown);
+      if (orderSuccessMsg && !orderSuccessMsg.hasAttribute('hidden')) {
+        resetSuccessView();
+      }
+      if (lastFocusedBeforeCart && typeof lastFocusedBeforeCart.focus === 'function') {
+        lastFocusedBeforeCart.focus();
+      }
     }
 
     function onKeyDown(e) {
+      const policyModal = document.getElementById('policy-modal');
+      if (policyModal && policyModal.classList.contains('is-open')) return;
       if (e.key === 'Escape') {
         closeCart();
       }
@@ -178,18 +322,21 @@ document.documentElement.classList.add('js');
     if (trayOpenCartBtn) trayOpenCartBtn.addEventListener('click', openCart);
     if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
     if (cartBackdrop) cartBackdrop.addEventListener('click', closeCart);
+    if (orderNewBtn) {
+      orderNewBtn.addEventListener('click', () => {
+        resetSuccessView();
+      });
+    }
 
-    // Склонение существительных
     function getRussianPlural(n, forms) {
-      n = Math.abs(n) % 100;
-      const n1 = n % 10;
-      if (n > 10 && n < 20) return forms[2];
+      const absN = Math.abs(n) % 100;
+      const n1 = absN % 10;
+      if (absN > 10 && absN < 20) return forms[2];
       if (n1 > 1 && n1 < 5) return forms[1];
       if (n1 === 1) return forms[0];
       return forms[2];
     }
 
-    // Переключение способа получения (самовывоз или доставка курьером)
     function setDeliveryMethod(method) {
       deliveryMethod = method;
       if (method === 'delivery') {
@@ -214,7 +361,9 @@ document.documentElement.classList.add('js');
         }
         if (pickupFields) pickupFields.hidden = false;
         if (deliveryFields) deliveryFields.hidden = true;
+        clearFieldError(orderStreet, streetError);
       }
+      saveState();
       updateAllUI();
     }
 
@@ -228,7 +377,6 @@ document.documentElement.classList.add('js');
       orderConsent.addEventListener('change', updateAllUI);
     }
 
-    // Полный пересчет калькулятора и обновление всех компонентов интерфейса
     function updateAllUI() {
       let count = 0;
       let foodSubtotal = 0;
@@ -242,14 +390,13 @@ document.documentElement.classList.add('js');
       cart.totalCount = count;
       cart.subtotal = foodSubtotal;
 
-      // Расчет доставки
       let currentDeliveryFee = 0;
       if (deliveryMethod === 'delivery') {
         if (foodSubtotal >= FREE_DELIVERY_THRESHOLD) {
           currentDeliveryFee = 0;
           if (cartDeliveryLabel) cartDeliveryLabel.textContent = 'Доставка курьером:';
           if (cartDeliveryVal) {
-            cartDeliveryVal.textContent = 'Бесплатно (заказ от 40 BYN)';
+            cartDeliveryVal.textContent = 'Бесплатно (от 40 BYN)';
             cartDeliveryVal.className = 'cart-free-tag';
           }
         } else {
@@ -272,12 +419,12 @@ document.documentElement.classList.add('js');
       const orderTotal = count > 0 ? (foodSubtotal + currentDeliveryFee) : 0;
       cart.totalPrice = orderTotal;
 
-      // 1. Шапка сайта
+      document.body.classList.toggle('has-order-tray', count > 0);
+
       if (headerCartBadge) {
-        headerCartBadge.textContent = count;
+        headerCartBadge.textContent = String(count);
       }
 
-      // 2. Плавающая нижняя панель (мобильная)
       if (orderTray) {
         if (count > 0) {
           orderTray.classList.add('is-visible');
@@ -293,11 +440,9 @@ document.documentElement.classList.add('js');
         }
       }
 
-      // 3. Калькулятор корзины
       if (cartSubtotalVal) cartSubtotalVal.textContent = `${foodSubtotal.toFixed(2)} BYN`;
       if (cartTotalVal) cartTotalVal.textContent = `${orderTotal.toFixed(2)} BYN`;
 
-      // 4. Прогресс минимального заказа (20.00 BYN)
       const diff = MIN_ORDER_AMOUNT - foodSubtotal;
       const progressRatio = Math.min(1, foodSubtotal / MIN_ORDER_AMOUNT);
 
@@ -318,7 +463,7 @@ document.documentElement.classList.add('js');
           checkoutSubmitBtn.setAttribute('aria-disabled', 'true');
         }
         if (checkoutBtnText) {
-          checkoutBtnText.textContent = `Добавьте еще на ${diff.toFixed(2)} BYN (минимум 20)`;
+          checkoutBtnText.textContent = `Добавьте ещё на ${diff.toFixed(2)} BYN (минимум 20)`;
         }
       } else if (!isConsentGiven) {
         if (cartProgressStatus) {
@@ -334,7 +479,7 @@ document.documentElement.classList.add('js');
         }
       } else {
         if (cartProgressStatus) {
-          cartProgressStatus.textContent = 'Минимальный заказ набран! Можно оформлять.';
+          cartProgressStatus.textContent = 'Минимальный заказ набран, можно оформлять.';
           cartProgressStatus.classList.add('is-complete');
         }
         if (cartProgressBar) cartProgressBar.classList.add('is-complete');
@@ -347,55 +492,70 @@ document.documentElement.classList.add('js');
         }
       }
 
-      // 5. Рендеринг позиций в корзине
       renderCartDrawerItems();
-
-      // 6. Синхронизация кнопок и степперов в карточках меню
       syncMenuCardsUI();
+      saveState();
     }
 
-    // Отрисовка элементов в корзине
     function renderCartDrawerItems() {
       if (!cartItemsList) return;
 
+      cartItemsList.replaceChildren();
       const itemIds = Object.keys(cart.items);
 
       if (itemIds.length === 0) {
-        cartItemsList.innerHTML = `
-          <div class="cart-empty-state" id="cart-empty-state">
-            <p class="cart-empty-text">В корзине пока пусто</p>
-            <p class="cart-empty-sub">Выберите горячие смаженки или напитки в меню</p>
-          </div>
-        `;
+        const emptyBox = document.createElement('div');
+        emptyBox.className = 'cart-empty-state';
+        emptyBox.id = 'cart-empty-state';
+
+        const emptyTitle = document.createElement('p');
+        emptyTitle.className = 'cart-empty-text';
+        emptyTitle.textContent = 'В корзине пока пусто';
+
+        const emptySub = document.createElement('p');
+        emptySub.className = 'cart-empty-sub';
+        emptySub.textContent = 'Выберите горячие смаженки или напитки в меню';
+
+        emptyBox.append(emptyTitle, emptySub);
+        cartItemsList.appendChild(emptyBox);
         return;
       }
 
-      let html = '';
+      const fragment = document.createDocumentFragment();
       for (const id of itemIds) {
         const item = cart.items[id];
-        const subtotal = (item.qty * item.price).toFixed(2);
-        html += `
-          <div class="cart-item-row" data-id="${id}">
-            <div class="cart-item-info">
-              <span class="cart-item-name">${item.name}</span>
-              <span class="cart-item-price num">${item.price.toFixed(2)} BYN за шт</span>
-            </div>
-            <div class="stepper" role="group" aria-label="Количество для ${item.name}">
-              <button type="button" class="stepper-btn" data-action="decrease" aria-label="Уменьшить">−</button>
-              <span class="stepper-count" aria-live="polite">${item.qty}</span>
-              <button type="button" class="stepper-btn" data-action="increase" aria-label="Увеличить">+</button>
-            </div>
-            <span class="cart-item-subtotal">${subtotal} BYN</span>
-          </div>
-        `;
+        const row = document.createElement('div');
+        row.className = 'cart-item-row';
+        row.setAttribute('data-id', id);
+
+        const info = document.createElement('div');
+        info.className = 'cart-item-info';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'cart-item-name';
+        nameSpan.textContent = item.name;
+
+        const priceSpan = document.createElement('span');
+        priceSpan.className = 'cart-item-price num';
+        priceSpan.textContent = `${item.price.toFixed(2)} BYN за шт`;
+
+        info.append(nameSpan, priceSpan);
+
+        const stepper = createStepperElement(item.name, item.qty);
+
+        const subtotalSpan = document.createElement('span');
+        subtotalSpan.className = 'cart-item-subtotal';
+        subtotalSpan.textContent = `${(item.qty * item.price).toFixed(2)} BYN`;
+
+        row.append(info, stepper, subtotalSpan);
+        fragment.appendChild(row);
       }
 
-      cartItemsList.innerHTML = html;
+      cartItemsList.appendChild(fragment);
     }
 
-    // Синхронизация карточек меню со стейтом корзины
     function syncMenuCardsUI() {
-      document.querySelectorAll('.menu-card').forEach(card => {
+      document.querySelectorAll('.menu-card').forEach((card) => {
         const id = card.getAttribute('data-id');
         const addBtn = card.querySelector('.item-btn');
         let stepper = card.querySelector('.stepper');
@@ -404,19 +564,14 @@ document.documentElement.classList.add('js');
           if (addBtn) addBtn.style.display = 'none';
           if (!stepper) {
             const bottomBox = card.querySelector('.menu-card-bottom');
-            stepper = document.createElement('div');
-            stepper.className = 'stepper';
-            stepper.setAttribute('role', 'group');
-            stepper.setAttribute('aria-label', `Количество для ${cart.items[id].name}`);
-            stepper.innerHTML = `
-              <button type="button" class="stepper-btn" data-action="decrease" aria-label="Уменьшить">−</button>
-              <span class="stepper-count" aria-live="polite">${cart.items[id].qty}</span>
-              <button type="button" class="stepper-btn" data-action="increase" aria-label="Увеличить">+</button>
-            `;
-            bottomBox.appendChild(stepper);
+            if (bottomBox) {
+              stepper = createStepperElement(cart.items[id].name, cart.items[id].qty);
+              bottomBox.appendChild(stepper);
+            }
           } else {
             stepper.style.display = 'inline-flex';
-            stepper.querySelector('.stepper-count').textContent = cart.items[id].qty;
+            const countEl = stepper.querySelector('.stepper-count');
+            if (countEl) countEl.textContent = String(cart.items[id].qty);
           }
         } else {
           if (addBtn) addBtn.style.display = 'inline-flex';
@@ -425,7 +580,16 @@ document.documentElement.classList.add('js');
       });
     }
 
-    // Клик по кнопкам карточек меню
+    function updateItemQty(id, delta) {
+      if (!cart.items[id]) return;
+      cart.items[id].qty += delta;
+      if (cart.items[id].qty <= 0) {
+        delete cart.items[id];
+      }
+      resetSuccessView();
+      updateAllUI();
+    }
+
     if (menuGrid) {
       menuGrid.addEventListener('click', (e) => {
         const addBtn = e.target.closest('.item-btn');
@@ -433,127 +597,119 @@ document.documentElement.classList.add('js');
 
         if (addBtn) {
           const card = addBtn.closest('.menu-card');
+          if (!card) return;
           const id = card.getAttribute('data-id');
           const price = parseFloat(card.getAttribute('data-price') || '0');
-          const name = card.querySelector('.menu-card-name')?.textContent || '';
-
+          const name = card.querySelector('.menu-card-name')?.textContent?.trim() || '';
           cart.items[id] = { qty: 1, price, name };
+          resetSuccessView();
           updateAllUI();
         }
 
         if (stepBtn) {
           const card = stepBtn.closest('.menu-card');
+          if (!card) return;
           const id = card.getAttribute('data-id');
           const action = stepBtn.getAttribute('data-action');
-
-          if (!cart.items[id]) return;
-
-          if (action === 'increase') {
-            cart.items[id].qty += 1;
-          } else if (action === 'decrease') {
-            cart.items[id].qty -= 1;
-            if (cart.items[id].qty <= 0) {
-              delete cart.items[id];
-            }
-          }
-
-          updateAllUI();
+          updateItemQty(id, action === 'increase' ? 1 : -1);
         }
       });
     }
 
-    // Клик по кнопкам изменения количества внутри корзины
     if (cartItemsList) {
       cartItemsList.addEventListener('click', (e) => {
         const stepBtn = e.target.closest('.stepper-btn');
         if (!stepBtn) return;
-
         const row = stepBtn.closest('.cart-item-row');
+        if (!row) return;
         const id = row.getAttribute('data-id');
         const action = stepBtn.getAttribute('data-action');
-
-        if (!cart.items[id]) return;
-
-        if (action === 'increase') {
-          cart.items[id].qty += 1;
-        } else if (action === 'decrease') {
-          cart.items[id].qty -= 1;
-          if (cart.items[id].qty <= 0) {
-            delete cart.items[id];
-          }
-        }
-
-        updateAllUI();
+        updateItemQty(id, action === 'increase' ? 1 : -1);
       });
     }
 
-    // Очистка корзины
     if (trayResetBtn) {
       trayResetBtn.addEventListener('click', () => {
         cart.items = {};
+        resetSuccessView();
         updateAllUI();
       });
     }
 
-    // Отправка заказа (чек-аут)
+    function isValidBelarusPhone(raw) {
+      const digits = raw.replace(/\D/g, '');
+      if (digits.startsWith('375')) return digits.length === 12;
+      if (digits.startsWith('80')) return digits.length === 11;
+      return digits.length >= 9 && digits.length <= 12;
+    }
+
     if (checkoutForm) {
       checkoutForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        if (cart.subtotal < MIN_ORDER_AMOUNT) {
-          return;
-        }
+        if (cart.subtotal < MIN_ORDER_AMOUNT) return;
 
         if (orderConsent && !orderConsent.checked) {
           orderConsent.focus();
           return;
         }
 
-        const nameInput = document.getElementById('order-name');
-        const phoneInput = document.getElementById('order-phone');
-
-        if (!nameInput.value.trim()) {
-          nameInput.focus();
-          return;
-        }
-
-        if (!phoneInput.value.trim()) {
-          phoneInput.focus();
-          return;
-        }
+        let firstInvalid = null;
 
         if (deliveryMethod === 'delivery') {
           if (!orderStreet || !orderStreet.value.trim()) {
-            if (orderStreet) orderStreet.focus();
-            return;
+            setFieldError(orderStreet, streetError, 'Укажите улицу и номер дома для доставки');
+            firstInvalid = firstInvalid || orderStreet;
+          } else {
+            clearFieldError(orderStreet, streetError);
           }
+        }
+
+        if (!orderName || !orderName.value.trim()) {
+          setFieldError(orderName, nameError, 'Укажите ваше имя');
+          firstInvalid = firstInvalid || orderName;
+        } else {
+          clearFieldError(orderName, nameError);
+        }
+
+        const phoneVal = orderPhone ? orderPhone.value.trim() : '';
+        if (!phoneVal) {
+          setFieldError(orderPhone, phoneError, 'Укажите номер телефона для связи');
+          firstInvalid = firstInvalid || orderPhone;
+        } else if (!isValidBelarusPhone(phoneVal)) {
+          setFieldError(orderPhone, phoneError, 'Введите номер в формате +375 (29) 700-70-79');
+          firstInvalid = firstInvalid || orderPhone;
+        } else {
+          clearFieldError(orderPhone, phoneError);
+        }
+
+        if (firstInvalid) {
+          firstInvalid.focus();
+          return;
         }
 
         if (orderSuccessText) {
           if (deliveryMethod === 'delivery') {
-            orderSuccessText.textContent = `Курьер привезет горячий заказ по адресу: ${orderStreet.value.trim()}. Детали переданы в пекарню!`;
+            orderSuccessText.textContent = `Курьер привезёт заказ по адресу: ${orderStreet.value.trim()}. Если нужно уточнить детали по телефону, звоните +375 (29) 700-70-79.`;
           } else {
-            const spotEl = document.getElementById('order-spot');
-            const spotText = spotEl ? spotEl.options[spotEl.selectedIndex].text : 'выбранной точке';
-            orderSuccessText.textContent = `Готовим горячими к вашему времени на точке: ${spotText}. Ждем вас!`;
+            const spotText = orderSpot ? orderSpot.options[orderSpot.selectedIndex].text : 'выбранной точке';
+            orderSuccessText.textContent = `Готовим к вашему времени на точке: ${spotText}. Ждём вас в пекарне.`;
           }
         }
 
+        cart.items = {};
+        checkoutForm.reset();
+        if (orderConsent) orderConsent.checked = true;
+        if (orderSpot) orderSpot.value = selectedSpot;
+        updateAllUI();
+
         checkoutForm.style.display = 'none';
         if (orderSuccessMsg) orderSuccessMsg.removeAttribute('hidden');
-
-        setTimeout(() => {
-          cart.items = {};
-          updateAllUI();
-          if (orderSuccessMsg) orderSuccessMsg.setAttribute('hidden', '');
-          checkoutForm.reset();
-          if (orderConsent) orderConsent.checked = true;
-          setDeliveryMethod('pickup');
-          checkoutForm.style.display = 'flex';
-          closeCart();
-        }, 4000);
       });
     }
+
+    // Инициализация UI с учетом сохраненного состояния
+    setDeliveryMethod(deliveryMethod);
   }
 
   // 4. Модальное окно политики обработки персональных данных
@@ -566,12 +722,16 @@ document.documentElement.classList.add('js');
 
     if (!modal || !backdrop) return;
 
+    let lastFocusedBeforePolicy = null;
+
     function openModal() {
+      lastFocusedBeforePolicy = document.activeElement;
       modal.classList.add('is-open');
       backdrop.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
       backdrop.setAttribute('aria-hidden', 'false');
       document.addEventListener('keydown', onKeyDown);
+      if (closeBtn) closeBtn.focus();
     }
 
     function closeModal() {
@@ -580,6 +740,9 @@ document.documentElement.classList.add('js');
       modal.setAttribute('aria-hidden', 'true');
       backdrop.setAttribute('aria-hidden', 'true');
       document.removeEventListener('keydown', onKeyDown);
+      if (lastFocusedBeforePolicy && typeof lastFocusedBeforePolicy.focus === 'function') {
+        lastFocusedBeforePolicy.focus();
+      }
     }
 
     function onKeyDown(e) {
@@ -594,7 +757,7 @@ document.documentElement.classList.add('js');
     if (backdrop) backdrop.addEventListener('click', closeModal);
   }
 
-  // 5. Уведомление об использовании файлов cookie
+  // 5. Уведомление об использовании файлов cookie и localStorage
   function initCookieNotice() {
     const banner = document.getElementById('cookie-banner');
     const acceptBtn = document.getElementById('accept-cookies-btn');
@@ -606,7 +769,7 @@ document.documentElement.classList.add('js');
     try {
       isAccepted = localStorage.getItem(COOKIE_KEY) === 'true';
     } catch (e) {
-      // LocalStorage недоступен
+      // localStorage недоступен
     }
 
     if (!isAccepted) {
@@ -619,7 +782,7 @@ document.documentElement.classList.add('js');
       try {
         localStorage.setItem(COOKIE_KEY, 'true');
       } catch (e) {
-        // LocalStorage недоступен
+        // localStorage недоступен
       }
       banner.classList.remove('is-visible');
     });
@@ -627,7 +790,7 @@ document.documentElement.classList.add('js');
 
   // 6. Плавный скролл к якорям с учетом липкого заголовка
   function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
       anchor.addEventListener('click', function(e) {
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
@@ -646,22 +809,19 @@ document.documentElement.classList.add('js');
     });
   }
 
-  // Запуск при готовности DOM
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      initOvenStatus();
-      initMenuFilters();
-      initCartAndOrder();
-      initPolicyModal();
-      initCookieNotice();
-      initSmoothScroll();
-    });
-  } else {
+  function bootstrap() {
+    loadSavedState();
     initOvenStatus();
     initMenuFilters();
     initCartAndOrder();
     initPolicyModal();
     initCookieNotice();
     initSmoothScroll();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrap);
+  } else {
+    bootstrap();
   }
 })();

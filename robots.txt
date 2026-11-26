@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vladgaluhin260-rgb.github.io/smazhenka-mogilev/sitemap.xml
