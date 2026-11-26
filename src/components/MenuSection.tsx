@@ -1,5 +1,6 @@
 import { useState, type KeyboardEvent } from 'react';
 import { LayoutGroup, motion } from 'framer-motion';
+import { ShoppingBag } from 'lucide-react';
 import { CATEGORY_TABS, DISHES } from '../data/menuData';
 import { EMIL_EASE_OUT, SPRING_SNAPPY } from '../lib/motion';
 import type { DishCategory, DishItem } from '../types/menu';
@@ -56,7 +57,7 @@ export function MenuSection({
           </p>
         </header>
 
-        <div className="sticky top-16 z-10 -mx-4 mb-9 border-b border-bakery-border bg-bakery-page/90 px-4 py-2.5 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <div className="sticky top-[66px] z-10 -mx-4 mb-9 border-b border-bakery-border bg-bakery-page/90 px-4 py-2.5 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <LayoutGroup>
             <div
               className="no-scrollbar flex max-w-full gap-1 overflow-x-auto"
@@ -102,17 +103,18 @@ export function MenuSection({
             const qty = quantities[dish.id] || 0;
             return (
               <motion.article
-                key={dish.id}
+                key={`${activeCategory}-${dish.id}`}
                 data-id={dish.id}
                 data-category={dish.category}
                 data-price={dish.price.toFixed(2)}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 14, scale: 0.985 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{
-                  duration: 0.3,
-                  delay: Math.min(idx * 0.025, 0.16),
+                  duration: 0.32,
+                  delay: Math.min(idx * 0.03, 0.2),
                   ease: EMIL_EASE_OUT,
                 }}
+                whileHover={{ y: -3 }}
                 onClick={(e) => {
                   const target = e.target as HTMLElement;
                   if (target.closest('.item-btn') || target.closest('.stepper')) return;
@@ -128,7 +130,7 @@ export function MenuSection({
                     height={480}
                     loading="lazy"
                     decoding="async"
-                    className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
                   />
                 </div>
 
@@ -167,13 +169,15 @@ export function MenuSection({
                     {qty === 0 ? (
                       <motion.button
                         type="button"
-                        whileTap={{ scale: 0.96 }}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.95 }}
                         transition={SPRING_SNAPPY}
                         onClick={() => onAddItem(dish.id)}
                         aria-label={`Добавить ${dish.name} в корзину`}
-                        className="item-btn inline-flex h-9 items-center justify-center rounded-xl bg-bakery-charcoal px-4 text-xs font-semibold text-white transition-colors hover:bg-bakery-charcoalHover"
+                        className="item-btn inline-flex h-9 items-center justify-center gap-1.5 rounded-xl bg-bakery-charcoal px-4 text-xs font-semibold text-white transition-colors hover:bg-bakery-charcoalHover"
                       >
-                        В корзину
+                        <ShoppingBag className="h-3.5 w-3.5 text-bakery-amber" aria-hidden="true" />
+                        <span>В корзину</span>
                       </motion.button>
                     ) : (
                       <div
@@ -183,7 +187,7 @@ export function MenuSection({
                       >
                         <motion.button
                           type="button"
-                          whileTap={{ scale: 0.92 }}
+                          whileTap={{ scale: 0.88 }}
                           transition={SPRING_SNAPPY}
                           data-action="decrease"
                           onClick={() => onUpdateQty(dish.id, -1)}
@@ -192,15 +196,19 @@ export function MenuSection({
                         >
                           -
                         </motion.button>
-                        <span
+                        <motion.span
+                          key={qty}
+                          initial={{ scale: 0.75 }}
+                          animate={{ scale: 1 }}
+                          transition={SPRING_SNAPPY}
                           className="stepper-count num min-w-[22px] text-center font-display text-sm font-bold text-bakery-ink"
                           aria-live="polite"
                         >
                           {qty}
-                        </span>
+                        </motion.span>
                         <motion.button
                           type="button"
-                          whileTap={{ scale: 0.92 }}
+                          whileTap={{ scale: 0.88 }}
                           transition={SPRING_SNAPPY}
                           data-action="increase"
                           onClick={() => onUpdateQty(dish.id, 1)}

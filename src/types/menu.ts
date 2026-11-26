@@ -44,7 +44,6 @@ export interface BakeryLocation {
   title: string;
   address: string;
   badge: string;
-  rating: string;
   image: string;
   alt: string;
   description: string;

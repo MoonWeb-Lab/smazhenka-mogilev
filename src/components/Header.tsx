@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
 import { BAKERY_INSTAGRAM_URL } from '../data/menuData';
 import { SPRING_SNAPPY } from '../lib/motion';
@@ -10,10 +10,20 @@ interface HeaderProps {
 }
 
 export function Header({ totalCount, onOpenCart }: HeaderProps) {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 220,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
   return (
     <header className="sticky top-0 z-30 border-b border-bakery-border bg-bakery-page/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <a
+        <motion.a
+          whileHover={{ x: 1 }}
+          whileTap={{ scale: 0.98 }}
+          transition={SPRING_SNAPPY}
           href="#"
           className="flex shrink-0 items-center gap-2.5 text-bakery-ink no-underline"
           aria-label="Смаженка Могилёв на главную"
@@ -28,7 +38,7 @@ export function Header({ totalCount, onOpenCart }: HeaderProps) {
           <span className="font-display text-base font-extrabold tracking-tight text-bakery-ink sm:text-lg">
             Смаженка Могилёв
           </span>
-        </a>
+        </motion.a>
 
         <nav aria-label="Основная навигация" className="hidden md:block">
           <ul className="flex list-none items-center gap-1 p-0">
@@ -61,6 +71,7 @@ export function Header({ totalCount, onOpenCart }: HeaderProps) {
 
         <div className="flex items-center gap-2">
           <motion.a
+            whileHover={{ y: -1 }}
             whileTap={{ scale: 0.97 }}
             transition={SPRING_SNAPPY}
             href={BAKERY_INSTAGRAM_URL}
@@ -76,6 +87,7 @@ export function Header({ totalCount, onOpenCart }: HeaderProps) {
           <motion.button
             type="button"
             id="open-cart-btn"
+            whileHover={{ y: -1 }}
             whileTap={{ scale: 0.97 }}
             transition={SPRING_SNAPPY}
             onClick={onOpenCart}
@@ -86,8 +98,8 @@ export function Header({ totalCount, onOpenCart }: HeaderProps) {
             <span className="hidden sm:inline">Корзина</span>
             <motion.span
               key={totalCount}
-              initial={{ scale: 0.85 }}
-              animate={{ scale: 1 }}
+              initial={{ scale: 0.72, y: -2 }}
+              animate={{ scale: 1, y: 0 }}
               transition={SPRING_SNAPPY}
               id="header-cart-badge"
               className="num inline-flex h-5 min-w-[20px] items-center justify-center rounded-md bg-bakery-amber px-1.5 text-xs font-bold leading-none text-white"
@@ -97,6 +109,12 @@ export function Header({ totalCount, onOpenCart }: HeaderProps) {
           </motion.button>
         </div>
       </div>
+
+      <motion.div
+        style={{ scaleX }}
+        className="h-[2px] w-full origin-left bg-bakery-amber"
+        aria-hidden="true"
+      />
     </header>
   );
 }

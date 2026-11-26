@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 import { EMIL_EASE_DRAWER, SPRING_SNAPPY } from '../lib/motion';
 import { getRussianPlural } from '../utils/phoneValidation';
 
@@ -28,12 +29,16 @@ export function OrderTray({ totalCount, orderTotal, onReset, onOpenCart }: Order
               <span id="tray-count-text" className="text-xs font-semibold text-bakery-secondary">
                 В заказе: {totalCount} {word}
               </span>
-              <span
+              <motion.span
+                key={orderTotal.toFixed(2)}
+                initial={{ scale: 0.94, opacity: 0.7 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={SPRING_SNAPPY}
                 id="tray-total-text"
-                className="num font-display text-lg font-extrabold text-bakery-ink"
+                className="num inline-block origin-left font-display text-lg font-extrabold text-bakery-ink"
               >
                 {orderTotal.toFixed(2)} BYN
-              </span>
+              </motion.span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -50,12 +55,17 @@ export function OrderTray({ totalCount, orderTotal, onReset, onOpenCart }: Order
               <motion.button
                 type="button"
                 id="tray-open-cart-btn"
+                whileHover={{ y: -1 }}
                 whileTap={{ scale: 0.96 }}
                 transition={SPRING_SNAPPY}
                 onClick={onOpenCart}
-                className="inline-flex items-center justify-center rounded-xl bg-bakery-charcoal px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-bakery-charcoalHover"
+                className="group inline-flex items-center justify-center gap-1.5 rounded-xl bg-bakery-charcoal px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-bakery-charcoalHover"
               >
-                Оформить заказ
+                <span>Оформить заказ</span>
+                <ArrowRight
+                  className="h-3.5 w-3.5 transition-transform duration-200 ease-out group-hover:translate-x-0.5"
+                  aria-hidden="true"
+                />
               </motion.button>
             </div>
           </div>

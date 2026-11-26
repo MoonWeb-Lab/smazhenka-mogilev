@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { CRAFT_STEPS } from '../data/menuData';
-import { CARD_VIEWPORT, EMIL_EASE_OUT } from '../lib/motion';
+import { CARD_VIEWPORT, EMIL_EASE_OUT, SPRING_SNAPPY } from '../lib/motion';
 
 export function CraftSection() {
   return (
@@ -10,7 +10,13 @@ export function CraftSection() {
       aria-labelledby="craft-title"
     >
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
-        <header className="mb-8 flex flex-col gap-1.5">
+        <motion.header
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={CARD_VIEWPORT}
+          transition={{ duration: 0.38, ease: EMIL_EASE_OUT }}
+          className="mb-8 flex flex-col gap-1.5"
+        >
           <span className="text-xs font-bold uppercase tracking-wider text-bakery-amberInk">
             Кухня пекарни
           </span>
@@ -23,22 +29,35 @@ export function CraftSection() {
           <p className="max-w-[56ch] text-base text-bakery-textMuted">
             Три простых правила, за которыми мы следим на обеих точках каждый день.
           </p>
-        </header>
+        </motion.header>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {CRAFT_STEPS.map((step, idx) => (
             <motion.article
               key={step.num}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={CARD_VIEWPORT}
-              transition={{ duration: 0.36, delay: idx * 0.06, ease: EMIL_EASE_OUT }}
-              className="flex flex-col border-t border-bakery-border pt-5"
+              transition={{ duration: 0.4, delay: idx * 0.08, ease: EMIL_EASE_OUT }}
+              whileHover={{ y: -4 }}
+              className="group flex flex-col pt-1"
             >
-              <div className="num mb-2 font-display text-2xl font-extrabold text-bakery-amber">
+              <motion.div
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={CARD_VIEWPORT}
+                transition={{ duration: 0.45, delay: idx * 0.08, ease: EMIL_EASE_OUT }}
+                className="mb-4 h-px w-full origin-left bg-bakery-border transition-colors duration-200 group-hover:bg-bakery-amber"
+                aria-hidden="true"
+              />
+              <motion.div
+                whileHover={{ x: 2 }}
+                transition={SPRING_SNAPPY}
+                className="num mb-2 font-display text-2xl font-extrabold text-bakery-amber"
+              >
                 {step.num}
-              </div>
-              <h3 className="mb-2 font-display text-lg font-bold text-bakery-ink">
+              </motion.div>
+              <h3 className="mb-2 font-display text-lg font-bold text-bakery-ink transition-colors group-hover:text-bakery-amberInk">
                 {step.title}
               </h3>
               <p className="text-sm leading-relaxed text-bakery-textMuted">{step.desc}</p>
